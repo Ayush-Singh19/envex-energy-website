@@ -4,6 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
+<template id="__bundler_thumbnail" data-bg-color="#05264a">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#05264a"/>
+    <circle cx="600" cy="350" r="96" fill="#ffb84d"/>
+    <g stroke="#8fd14f" stroke-width="18" stroke-linecap="round">
+      <path d="M600 178V120"/><path d="M600 580v58"/>
+      <path d="M428 350h-58"/><path d="M830 350h58"/>
+      <path d="M478 228l-41-41"/><path d="M722 472l41 41"/>
+      <path d="M722 228l41-41"/><path d="M478 472l-41 41"/>
+    </g>
+    <rect x="400" y="640" width="400" height="26" rx="13" fill="#ffffff" opacity="0.9"/>
+  </svg>
+</template>
 </head>
 <body>
 <x-dc>
@@ -27,7 +40,7 @@
   <div style="{{ navBarStyle }}">
     <header style="display: flex; align-items: center; justify-content: space-between; gap: 20px; max-width: 1560px; margin: 0 auto; padding: 16px clamp(16px, 3vw, 40px); box-sizing: border-box;">
       <a href="#top" onClick="{{ closeMenu }}" style="display: flex; align-items: center; gap: 10px; color: #ffffff; flex: 0 0 auto;">
-        <img src="media/envex-mark-light.png" alt="" style="display: block; height: 38px; width: auto;">
+        <img src="../public/media/envex-mark-light.png" alt="" style="display: block; height: 38px; width: auto;">
         <span style="display: flex; flex-direction: column; line-height: 1;">
           <span style="font-size: clamp(17px, 2vw, 20px); font-weight: 700; letter-spacing: .04em; white-space: nowrap;">ENVEX</span>
           <span style="font-size: 10.5px; font-weight: 600; letter-spacing: .34em; color: #8fd14f;">ENERGY</span>
@@ -35,7 +48,7 @@
       </a>
 
       <sc-if value="{{ isWide }}" hint-placeholder-val="{{ true }}">
-        <nav onMouseLeave="{{ closeDrop }}" style="display: flex; flex: 1 1 auto; align-items: stretch; justify-content: center; gap: clamp(5px, 1vw, 16px);">
+        <nav onMouseLeave="{{ closeDrop }}" style="display: flex; align-items: stretch; gap: clamp(5px, 1vw, 16px);">
           <sc-for list="{{ menu }}" as="item" hint-placeholder-count="7">
             <div onMouseEnter="{{ item.onEnter }}" style="position: relative;">
               <a href="{{ item.href }}" onClick="{{ item.onGo }}" style="display: inline-flex; align-items: center; gap: 7px; padding: 10px 4px; color: rgba(255,255,255,.92); font-size: 12.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; white-space: nowrap;" style-hover="color: #ffb84d;">
@@ -53,7 +66,6 @@
             </div>
           </sc-for>
         </nav>
-        <span aria-hidden="true" style="flex: 0 0 auto; width: 132px;"></span>
       </sc-if>
 
       <sc-if value="{{ isNarrow }}" hint-placeholder-val="{{ false }}">
@@ -91,7 +103,7 @@
   </div>
 
   <section id="top" ref="{{ heroRef }}" style="position: relative; isolation: isolate; min-height: min(880px, 94vh); display: flex; flex-direction: column; color: #ffffff; overflow: hidden; background: #05264a;">
-    <div style="position: absolute; inset: 0; z-index: 0; background: #05264a url('media/hero-still.jpeg') center/cover no-repeat; filter: brightness(1.2) saturate(1.05);"></div>
+    <div style="position: absolute; inset: 0; z-index: 0; background: #05264a url('../public/media/hero-still.jpeg') center/cover no-repeat; filter: brightness(1.2) saturate(1.05);"></div>
     <div style="position: absolute; inset: 0; z-index: 1; background: linear-gradient(96deg, rgba(3,20,39,.88) 0%, rgba(3,20,39,.7) 26%, rgba(3,20,39,.36) 44%, rgba(3,20,39,.06) 60%, rgba(3,20,39,0) 74%);"></div>
     <div style="position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(3,20,39,.5) 0%, rgba(3,20,39,0) 24%, rgba(3,20,39,0) 62%, rgba(3,20,39,.45) 100%);"></div>
 
@@ -296,7 +308,7 @@
   </section>
 
   <section id="contact" style="scroll-margin-top: 84px; padding: clamp(64px, 9vw, 120px) clamp(20px, 6vw, 80px);">
-    <div data-reveal="" style="opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1), transform .75s cubic-bezier(.22,.68,.3,1); position: relative; overflow: hidden; max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: clamp(22px, 4vw, 48px); padding: clamp(30px, 6vw, 64px); border-radius: 24px; background: linear-gradient(120deg, rgba(11,79,156,.94) 0%, rgba(46,143,216,.88) 100%), url('frames/v3-mid-clean.png') left top/112% auto no-repeat; color: #ffffff;">
+    <div data-reveal="" style="opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1), transform .75s cubic-bezier(.22,.68,.3,1); position: relative; overflow: hidden; max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: clamp(22px, 4vw, 48px); padding: clamp(30px, 6vw, 64px); border-radius: 24px; background: linear-gradient(120deg, rgba(11,79,156,.94) 0%, rgba(46,143,216,.88) 100%), url('../public/media/v3-mid-clean.png') left top/112% auto no-repeat; color: #ffffff;">
       <div style="max-width: 560px; display: flex; flex-direction: column; gap: 12px;">
         <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.82);">Contact us</p>
         <h2 style="margin: 0; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(25px, 3.3vw, 37px); line-height: 1.18; font-weight: 600; letter-spacing: -.02em; text-wrap: balance;">Find out what solar would cost on your roof.</h2>
@@ -315,7 +327,7 @@
   <footer style="border-top: 1px solid #e2e9f0; padding: clamp(40px, 6vw, 72px) clamp(20px, 6vw, 80px) 32px;">
     <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 165px), 1fr)); gap: clamp(24px, 4vw, 48px);">
       <div style="display: flex; flex-direction: column; gap: 12px; max-width: 300px;">
-        <img src="media/envex-logo.png" alt="Envex Energy" style="display: block; align-self: flex-start; width: auto; height: 86px; object-fit: contain; margin-left: -4px;">
+        <img src="../public/media/envex-logo.png" alt="Envex Energy" style="display: block; align-self: flex-start; width: auto; height: 86px; object-fit: contain; margin-left: -4px;">
         <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; color: #4a6076; text-wrap: pretty;">Rooftop solar designed, installed and maintained by one accountable team.</p>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -508,7 +520,7 @@ class Component extends DCLogic {
       iconWrapStyle: 'display: grid; place-items: center; flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px; background: rgba(143,209,79,.12); box-shadow: inset 0 0 0 1px rgba(143,209,79,.28); color: #a8de73;',
       itemStyle: mob
         ? 'display: flex; align-items: center; gap: 13px; flex: 0 0 auto; width: 76vw; max-width: 310px; padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);'
-        : 'display: flex; align-items: center; justify-content: center; gap: 15px; flex: 1 1 0; min-width: 0; min-height: 56px; padding: 0 clamp(14px, 1.6vw, 26px); border-left: ' + (i === 0 ? 'none' : '1px solid rgba(255,255,255,.13)') + ';'
+        : 'display: flex; align-items: center; gap: 15px; flex: 1 1 0; min-width: 0; min-height: 56px; padding: 0 clamp(14px, 1.6vw, 26px); border-left: ' + (i === 0 ? 'none' : '1px solid rgba(255,255,255,.13)') + ';'
     }));
     const sc = this.state.scrolled;
 

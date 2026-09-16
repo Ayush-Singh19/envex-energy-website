@@ -1,3 +1,6 @@
 .thumbnail
 .DS_Store
 Thumbs.db
+
+# Unused source material (~90MB): render frames, hero video takes, raw uploads
+raw/
