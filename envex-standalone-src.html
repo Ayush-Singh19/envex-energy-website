@@ -30,20 +30,68 @@
   /* No CSS scroll-behavior: the JS rAF easing owns scrolling, and a native smooth animation
      restarted on every frame's scrollTo() fought it into a stutter. */
   html { scroll-behavior: auto; }
-  body { margin: 0; background: #ffffff; color: #0c1f33; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: #ffffff; color: #0c1f33; font-family: Manrope, "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
   a { color: #0b5bd3; text-decoration: none; }
   a:hover { color: #08429b; }
   @keyframes envexRise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
   [data-reveal].envex-in { opacity: 1 !important; transform: none !important; }
-  /* Inner stagger for card contents: the parent card's reveal forces transform:none on itself,
-     so the finer entrance lives on [data-rise] children. */
-  [data-rise] { opacity: 0; transform: translateY(12px); transition: opacity .62s cubic-bezier(.22,.68,.3,1), transform .62s cubic-bezier(.22,.68,.3,1); }
+  /* Pillars go 3 → 1: auto-fit seated two columns across a wide middle band, orphaning Core values. */
+  @media (min-width: 600px) { [data-footer-grid] { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 900px) { [data-footer-grid] { grid-template-columns: 1.5fr 1fr 1fr 1fr; } }
+  @media (min-width: 760px) {
+    [data-pillar-grid] { grid-template-columns: 0.94fr 0.94fr 1.12fr !important; }
+  }
+  [data-pillar] [data-pillar-rule] { transform-origin: left center; transition: transform .5s cubic-bezier(.22,1,.36,1); }
+  [data-pillar]:hover [data-pillar-rule] { transform: scaleX(1.7); }
+  [data-pillar] [data-pillar-title] { transition: color .4s cubic-bezier(.22,1,.36,1), transform .4s cubic-bezier(.22,1,.36,1); }
+  [data-pillar]:hover [data-pillar-title] { transform: translateY(-2px); }
+  [data-pillar][data-pillar-key="vision"]:hover [data-pillar-title] { color: #0f4a86; }
+  [data-pillar][data-pillar-key="mission"]:hover [data-pillar-title] { color: #7a4c04; }
+  [data-pillar][data-pillar-key="values"]:hover [data-pillar-title] { color: #2a6019; }
+  [data-value-row] { transition: background .32s ease, border-color .32s ease; }
+  [data-value-row] [data-value-label] { display: inline-block; transition: transform .38s cubic-bezier(.22,1,.36,1), color .32s ease; }
+  [data-value-row] [data-value-num] { transition: color .32s ease; }
+  /* 01–04 pair up above 1000px so the values block stops running taller than Vision/Mission. */
+  @media (min-width: 1000px) {
+    [data-value-grid] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    [data-value-grid] > [data-value-full] { grid-column: 1 / -1; }
+  }
+  [data-value-row] [data-value-bar] { transform: scaleX(0); transform-origin: left center; transition: transform .45s cubic-bezier(.22,1,.36,1); }
+  [data-value-row] { opacity: 0; transform: translateY(12px); transition: opacity .58s cubic-bezier(.22,1,.36,1), transform .58s cubic-bezier(.22,1,.36,1), background .32s ease; }
+  [data-reveal].envex-in [data-value-row] { opacity: 1; transform: none; }
+  [data-reveal].envex-in [data-value-row][data-value-i="1"] { transition-delay: 0s; }
+  [data-reveal].envex-in [data-value-row][data-value-i="2"] { transition-delay: .08s; }
+  [data-reveal].envex-in [data-value-row][data-value-i="3"] { transition-delay: .16s; }
+  [data-reveal].envex-in [data-value-row][data-value-i="4"] { transition-delay: .24s; }
+  [data-reveal].envex-in [data-value-row][data-value-i="5"] { transition-delay: .32s; }
+  [data-value-row]:hover [data-value-bar] { transform: scaleX(1); }
+  [data-value-row]:hover { background: linear-gradient(90deg, rgba(95,174,59,.08) 0%, rgba(95,174,59,0) 76%); }
+  [data-value-row]:hover [data-value-label] { transform: translateX(4px); color: #2a6019; }
+  [data-value-row]:hover [data-value-num] { color: #2f6d1c; }
+  [data-value-row]:hover [data-value-label] { color: #0b1f33; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-pillar] [data-pillar-title], [data-value-row], [data-value-row] [data-value-label], [data-value-row] [data-value-bar] { transition: none !important; transform: none !important; }
+    [data-value-row] { opacity: 1 !important; }
+  }
+  /* About: staggered inner rise, clip-path image reveal, and thin-rule column hover.
+     These need parent-reveal-state or keyframe reach that inline styles can't express. */
+  [data-rise] { opacity: 0; transform: translateY(12px); transition: opacity .62s cubic-bezier(.22,1,.36,1), transform .62s cubic-bezier(.22,1,.36,1); }
   [data-reveal].envex-in [data-rise] { opacity: 1; transform: none; }
-  [data-reveal].envex-in [data-rise="1"] { transition-delay: .1s; }
-  [data-reveal].envex-in [data-rise="2"] { transition-delay: .18s; }
-  [data-reveal].envex-in [data-rise="3"] { transition-delay: .26s; }
-  [data-accent] { transform: scaleX(0); transform-origin: left center; transition: transform .8s cubic-bezier(.22,.68,.3,1) .05s; }
-  /* Solutions rows: parent-hover drives the arrow, bar and icon, which inline styles can't express. */
+  [data-reveal].envex-in [data-rise="1"] { transition-delay: .06s; }
+  [data-reveal].envex-in [data-rise="2"] { transition-delay: .14s; }
+  [data-reveal].envex-in [data-rise="3"] { transition-delay: .22s; }
+  [data-about-img] { transform: scale(1.04); opacity: 0; transition: transform 1s cubic-bezier(.22,1,.36,1), opacity .75s cubic-bezier(.22,1,.36,1); }
+  [data-reveal].envex-in [data-about-img] { transform: scale(1); opacity: 1; }
+  [data-about-frame]:hover [data-about-img] { transform: scale(1.02); }
+  [data-pillar] [data-pillar-rule] { transform: scaleX(.6); transform-origin: left center; transition: transform .55s cubic-bezier(.22,1,.36,1), background .35s ease; }
+  [data-pillar]:hover [data-pillar-rule] { transform: scaleX(1); background: #5fae3b; }
+  [data-pillar] [data-pillar-title] { transition: transform .4s cubic-bezier(.22,1,.36,1); }
+  [data-pillar]:hover [data-pillar-title] { transform: translateX(2px); }
+  @media (prefers-reduced-motion: reduce) {
+    [data-rise] { opacity: 1 !important; transform: none !important; transition: none !important; }
+    [data-about-img] { transform: none !important; opacity: 1 !important; transition: opacity .2s linear !important; }
+    [data-pillar] [data-pillar-rule], [data-pillar] [data-pillar-title] { transition: none !important; transform: none !important; }
+  }
   [data-sol-row] [data-sol-arrow] { transition: background .28s ease, color .28s ease, transform .3s cubic-bezier(.22,.68,.3,1); }
   [data-sol-row]:hover [data-sol-arrow] { background: #6fb52f; color: #052b4e; transform: translateX(4px); }
   [data-sol-row] [data-sol-bar] { transform: scaleY(.3); transition: transform .38s cubic-bezier(.22,.68,.3,1), opacity .3s ease; opacity: .45; }
@@ -179,9 +227,9 @@
           <span style="display: block; font-weight: 500; color: #8FD14FC4;">with your own roof</span>
         </h1>
         <div style="{{ heroMetaStyle }}">
-          <span style="{{ heroMetaItemStyle }}">Survey to switch-on</span>
-          <span style="{{ heroMetaItemStyle }}">Itemised quotes</span>
-          <span style="{{ heroMetaItemStyle }}">Our own crew</span>
+          <span style="{{ heroMetaItemStyle }}"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #8fd14f;"></span>Survey to switch-on</span>
+          <span style="{{ heroMetaItemStyle }}"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #8fd14f;"></span>Itemised quotes</span>
+          <span style="{{ heroMetaItemStyle }}"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #8fd14f;"></span>Our own crew</span>
         </div>
 
       </div>
@@ -194,7 +242,7 @@
             <span style="{{ f.iconWrapStyle }}">{{ f.icon }}</span>
             <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
               <span style="font-family: 'General Sans', Manrope, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: .17em; text-transform: uppercase; color: rgba(255,255,255,.9); line-height: 1.3;">{{ f.title }}</span>
-              <span style="font-family: Manrope, Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 12px; font-style: italic; font-weight: 400; letter-spacing: .01em; color: rgba(255,255,255,.62); line-height: 1.45; text-wrap: pretty;">{{ f.body }}</span>
+              <span style="font-family: Manrope, Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 400; letter-spacing: -.002em; color: rgba(255,255,255,.72); line-height: 1.45; text-wrap: pretty;">{{ f.body }}</span>
             </span>
           </div>
         </sc-for>
@@ -202,59 +250,87 @@
     </div>
   </section>
 
-  <section id="about" style="position: relative; overflow: hidden; box-sizing: border-box; scroll-margin-top: 96px; padding: clamp(56px, 7vw, 104px) clamp(20px, 6vw, 80px)">
-    <span aria-hidden="true" style="position: absolute; top: -18%; right: -8%; width: min(760px, 62vw); height: min(760px, 62vw); border-radius: 50%; background: radial-gradient(circle at 50% 50%, rgba(111,181,47,.16) 0%, rgba(111,181,47,0) 68%); pointer-events: none;"></span>
-    <span aria-hidden="true" style="position: absolute; bottom: -22%; left: -12%; width: min(680px, 58vw); height: min(680px, 58vw); border-radius: 50%; background: radial-gradient(circle at 50% 50%, rgba(11,79,156,.13) 0%, rgba(11,79,156,0) 70%); pointer-events: none;"></span>
-    <div style="position: relative; max-width: 1200px; margin: 0 auto;">
-      <div data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1) 0s, transform .75s cubic-bezier(.22,.68,.3,1) 0s; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: clamp(28px, 4vw, 60px); align-items: center;">
-        <div>
-          <p style="display: inline-flex; align-items: center; gap: 9px; margin: 0 0 18px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #0b4f9c">About us</p>
-          <h2 id="about-envex" style="margin: 0; scroll-margin-top: 96px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(29px, 3.6vw, 44px); line-height: 1.12; font-weight: 600; letter-spacing: -.022em; color: #0c1f33; text-wrap: balance;">Making the switch to solar something you can be confident about.</h2>
-          <div style="display: flex; flex-direction: column; gap: 16px; margin-top: clamp(20px, 2.2vw, 28px); max-width: 560px; border-left: 2px solid #dbe7f1; padding-left: clamp(16px, 1.8vw, 24px);">
-            <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 16.5px; line-height: 1.68; color: #415c78; text-wrap: pretty;">Envex Energy helps homes, businesses, and industries make the switch to solar with confidence. We provide complete solar solutions, from planning and installation to ongoing support.</p>
-            <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; line-height: 1.68; color: #5a7089; text-wrap: pretty;">With a focus on honest guidance, quality work, and dependable service, we're here to make clean energy simple and accessible.</p>
+  <section id="about" style="position: relative; box-sizing: border-box; scroll-margin-top: 96px; padding: clamp(60px, 7.5vw, 116px) clamp(20px, 6vw, 80px) clamp(56px, 7vw, 104px); background: linear-gradient(176deg, #fafbf8 0%, #f6f9fc 62%, #f3f7fb 100%);">
+    <div style="max-width: 1200px; margin: 0 auto;">
+
+      <div data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(22px); transition: opacity .72s cubic-bezier(.22,1,.36,1) 0s, transform .72s cubic-bezier(.22,1,.36,1) 0s; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: clamp(30px, 4vw, 66px); align-items: start;">
+        <div data-rise="1">
+          <p style="display: inline-flex; align-items: center; gap: 9px; margin: 0 0 clamp(18px, 2vw, 26px); font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #0b4f9c">About us</p>
+          <h2 id="about-envex" style="margin: 0; max-width: 19ch; scroll-margin-top: 96px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(29px, 3.7vw, 47px); line-height: 1.1; font-weight: 500; letter-spacing: -.022em; color: #0b1f33; text-wrap: balance;">Making the switch to <span style="font-weight: 600; letter-spacing: .015em; color: #4f7a00;">SOLAR</span>, something you can be confident about.</h2>
+          <div style="display: flex; flex-direction: column; gap: 17px; margin-top: clamp(22px, 2.4vw, 32px);">
+            <p style="margin: 0; max-width: 44ch; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: clamp(16px, 1.45vw, 17.5px); line-height: 1.66; color: #3b5570; text-wrap: pretty;">Envex Energy helps homes, businesses, and industries make the switch to solar with confidence. We provide complete solar solutions, from planning and installation to ongoing support.</p>
+            <p style="margin: 0; max-width: 41ch; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; line-height: 1.7; color: #55708c; text-wrap: pretty;">With a focus on honest guidance, quality work, and dependable service, we're here to make clean energy simple and accessible.</p>
           </div>
-          <div style="display: flex; flex-wrap: wrap; gap: 9px; margin-top: clamp(20px, 2.2vw, 26px);"><span style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 15px 8px 12px; border-radius: 999px; border: 1px solid #d7e4f0; background: #ffffff; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .03em; color: #12467f; box-shadow: 0 1px 2px rgba(12,31,51,.04);"><span style="width: 6px; height: 6px; border-radius: 50%; background: #6fb52f;"></span>Homes</span><span style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 15px 8px 12px; border-radius: 999px; border: 1px solid #d7e4f0; background: #ffffff; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .03em; color: #12467f; box-shadow: 0 1px 2px rgba(12,31,51,.04);"><span style="width: 6px; height: 6px; border-radius: 50%; background: #6fb52f;"></span>Businesses</span><span style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 15px 8px 12px; border-radius: 999px; border: 1px solid #d7e4f0; background: #ffffff; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .03em; color: #12467f; box-shadow: 0 1px 2px rgba(12,31,51,.04);"><span style="width: 6px; height: 6px; border-radius: 50%; background: #6fb52f;"></span>Industries</span></div>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px 26px; margin-top: clamp(22px, 2.4vw, 30px); padding-top: 18px; border-top: 1px solid #dde5ee;"><span style="display: inline-flex; align-items: center; gap: 9px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 500; letter-spacing: -.004em; color: #24425f;"><span aria-hidden="true" style="width: 5px; height: 5px; border-radius: 50%; background: #5fae3b;"></span>Homes</span><span style="display: inline-flex; align-items: center; gap: 9px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 500; letter-spacing: -.004em; color: #24425f;"><span aria-hidden="true" style="width: 5px; height: 5px; border-radius: 50%; background: #5fae3b;"></span>Businesses</span><span style="display: inline-flex; align-items: center; gap: 9px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 500; letter-spacing: -.004em; color: #24425f;"><span aria-hidden="true" style="width: 5px; height: 5px; border-radius: 50%; background: #5fae3b;"></span>Industries</span></div>
         </div>
-        <div style="position: relative; align-self: center; width: 100%; max-width: 560px; border-radius: 22px; overflow: hidden; border: 1px solid #dde7f1; min-height: clamp(260px, 26vw, 340px); box-shadow: 0 30px 62px -44px rgba(8,36,70,.5);">
-          <img src="media/about-installer.png" alt="Envex Energy technician installing rooftop solar panels above a valley" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 38% 50%;">
-          <span aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(4,26,48,.92) 0%, rgba(4,26,48,.6) 26%, rgba(4,26,48,.12) 52%, rgba(4,26,48,0) 74%);"></span>
-          <div style="position: absolute; inset: auto 0 0 0; padding: clamp(20px, 2.4vw, 28px);">
-            <p style="margin: 0 0 8px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: #9ed46a;">End to end</p>
-            <p style="margin: 0; max-width: 340px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: clamp(15.5px, 1.4vw, 17px); font-weight: 500; letter-spacing: -.004em; line-height: 1.45; color: #ffffff; text-wrap: pretty;">Planning, installation and ongoing support.</p>
-          </div>
-        </div>
+
+        <figure data-rise="2" data-about-frame="" style="margin: 0; display: flex; flex-direction: column; gap: clamp(14px, 1.6vw, 20px);">
+          <span style="position: relative; overflow: hidden; display: block; border-radius: 18px; background: #e9eff5; aspect-ratio: 3 / 2; box-shadow: 0 26px 54px -40px rgba(8,36,70,.42);">
+            <img data-about-img="" src="media/about-installer.png" alt="An Envex Energy technician fitting rooftop solar panels on a home overlooking a valley" loading="lazy" decoding="async" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 42% 50%;">
+          </span>
+          <figcaption style="display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; column-gap: 16px;">
+            <span style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #4f7a00;">End to end</span>
+            <span style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; line-height: 1.55; color: #55708c; text-wrap: pretty;">Planning, installation and ongoing support.</span>
+          </figcaption>
+        </figure>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); align-items: stretch; gap: clamp(16px, 2.2vw, 24px); margin-top: clamp(38px, 5vw, 68px);">
-        <div data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(26px); transition: opacity .8s cubic-bezier(.22,.68,.3,1) .04s, transform .8s cubic-bezier(.22,.68,.3,1) .04s, border-color .3s ease, box-shadow .35s ease; position: relative; overflow: hidden; display: flex; flex-direction: column; padding: clamp(26px, 3vw, 36px); border: 1px solid #e0e9f2; border-radius: 20px; background: #ffffff; box-shadow: 0 1px 2px rgba(12,31,51,.04);" style-hover="border-color: #bcd3e8; box-shadow: 0 22px 44px -28px rgba(11,47,86,.42);">
-          <span data-accent="" style="position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, #0b4f9c 0%, #6fb52f 100%);"></span>
-          <div data-rise="1" style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-            <span data-sub="vision" id="vision" style="display: inline-block; scroll-margin-top: 96px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #0b4f9c;">Vision</span>
+      <div data-pillar-grid="" style="display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(34px, 3.6vw, 56px); margin-top: clamp(46px, 5.5vw, 88px);">
+
+        <div data-pillar="" data-pillar-key="vision" data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(22px); transition: opacity .72s cubic-bezier(.22,1,.36,1) .04s, transform .72s cubic-bezier(.22,1,.36,1) .04s; padding: clamp(28px, 3.2vw, 42px) clamp(20px, 2.4vw, 34px) clamp(24px, 2.6vw, 34px) 0;">
+          <div style="display: flex; align-items: baseline; gap: 11px;">
+            <span style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .1em; color: #145da8;">01</span>
+            <span data-sub="vision" id="vision" style="scroll-margin-top: 96px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #4f6681;">Vision</span>
           </div>
-          <h3 data-rise="2" style="margin: 14px 0 12px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-weight: 600; letter-spacing: -.014em; font-size: clamp(20px, 1.6vw, 23px); line-height: 1.22; color: #0c1f33;">A cleaner energy future</h3>
-          <p data-rise="3" style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; line-height: 1.68; color: #5a7089; text-wrap: pretty;">We want to make solar a simple and practical choice for more homes and businesses, while building a company people can trust for the long term.</p>
+          <h3 data-pillar-title="" style="margin: 15px 0 14px; max-width: 16ch; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-weight: 500; letter-spacing: -.022em; font-size: clamp(21px, 2.05vw, 28px); line-height: 1.14; color: #0b1f33; text-wrap: balance;">A cleaner energy future</h3>
+          <span data-pillar-rule="" style="display: block; width: 52px; height: 2px; border-radius: 2px; background: #145da8; margin-bottom: 18px;"></span>
+          <p style="margin: 0; max-width: 37ch; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; line-height: 1.7; color: #52697f; text-wrap: pretty;">We want to make solar a simple and practical choice for more homes and businesses, while building a company people can trust for the long term.</p>
         </div>
-        <div data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(26px); transition: opacity .8s cubic-bezier(.22,.68,.3,1) .16s, transform .8s cubic-bezier(.22,.68,.3,1) .16s, border-color .3s ease, box-shadow .35s ease; position: relative; overflow: hidden; display: flex; flex-direction: column; padding: clamp(26px, 3vw, 36px); border: 1px solid #e0e9f2; border-radius: 20px; background: #ffffff; box-shadow: 0 1px 2px rgba(12,31,51,.04);" style-hover="border-color: #bcd3e8; box-shadow: 0 22px 44px -28px rgba(11,47,86,.42);">
-          <span data-accent="" style="position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, #0b4f9c 0%, #6fb52f 100%);"></span>
-          <div data-rise="1" style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-            <span data-sub="mission" id="mission" style="display: inline-block; scroll-margin-top: 96px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #0b4f9c;">Mission</span>
+
+        <div data-pillar="" data-pillar-key="mission" data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(22px); transition: opacity .72s cubic-bezier(.22,1,.36,1) .12s, transform .72s cubic-bezier(.22,1,.36,1) .12s; padding: clamp(28px, 3.2vw, 42px) clamp(20px, 2.4vw, 34px) clamp(24px, 2.6vw, 34px) clamp(0px, 2.4vw, 34px);">
+          <div style="display: flex; align-items: baseline; gap: 11px;">
+            <span style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .1em; color: #8a5605;">02</span>
+            <span data-sub="mission" id="mission" style="scroll-margin-top: 96px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #4f6681;">Mission</span>
           </div>
-          <h3 data-rise="2" style="margin: 14px 0 12px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-weight: 600; letter-spacing: -.014em; font-size: clamp(20px, 1.6vw, 23px); line-height: 1.22; color: #0c1f33;">Making solar easier</h3>
-          <p data-rise="3" style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; line-height: 1.68; color: #5a7089; text-wrap: pretty;">We aim to provide the right solar solution for every customer, with clear guidance, quality work, and support from start to finish.</p>
+          <h3 data-pillar-title="" style="margin: 15px 0 14px; max-width: 14ch; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-weight: 500; letter-spacing: -.022em; font-size: clamp(21px, 2.05vw, 28px); line-height: 1.14; color: #0b1f33; text-wrap: balance;">Making solar easier</h3>
+          <span data-pillar-rule="" style="display: block; width: 52px; height: 2px; border-radius: 2px; background: #c88a1e; margin-bottom: 18px;"></span>
+          <p style="margin: 0; max-width: 35ch; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; line-height: 1.7; color: #52697f; text-wrap: pretty;">We aim to provide the right solar solution for every customer, with clear guidance, quality work, and support from start to finish.</p>
         </div>
-        <div data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(26px); transition: opacity .8s cubic-bezier(.22,.68,.3,1) .28s, transform .8s cubic-bezier(.22,.68,.3,1) .28s, border-color .3s ease, box-shadow .35s ease; position: relative; overflow: hidden; display: flex; flex-direction: column; padding: clamp(26px, 3vw, 36px); border: 1px solid #e0e9f2; border-radius: 20px; background: #ffffff; box-shadow: 0 1px 2px rgba(12,31,51,.04);" style-hover="border-color: #bcd3e8; box-shadow: 0 22px 44px -28px rgba(11,47,86,.42);">
-          <span data-accent="" style="position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, #0b4f9c 0%, #6fb52f 100%);"></span>
-          <div data-rise="1" style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-            <span data-sub="values" id="values" style="display: inline-block; scroll-margin-top: 96px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #0b4f9c;">Core values</span>
+
+        <div data-pillar="" data-pillar-key="values" data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(22px); transition: opacity .72s cubic-bezier(.22,1,.36,1) .2s, transform .72s cubic-bezier(.22,1,.36,1) .2s; padding: clamp(28px, 3.2vw, 42px) 0 clamp(24px, 2.6vw, 34px) clamp(0px, 2.4vw, 34px);">
+          <div style="display: flex; align-items: baseline; gap: 11px;">
+            <span style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .1em; color: #2f6d1c;">03</span>
+            <span data-sub="values" id="values" style="scroll-margin-top: 96px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #4f6681;">Core values</span>
           </div>
-          <h3 data-rise="2" style="margin: 14px 0 12px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-weight: 600; letter-spacing: -.014em; font-size: clamp(20px, 1.6vw, 23px); line-height: 1.22; color: #0c1f33;">What matters to us</h3>
-          <div data-rise="3" style="display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 16px;">
-            <sc-for list="{{ coreValues }}" as="v" hint-placeholder-count="5">
-              <span style="display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px 6px 10px; border-radius: 999px; background: #f1f7ec; border: 1px solid #dcebd0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: -.002em; color: #2f5d1c;"><span style="width: 5px; height: 5px; border-radius: 50%; background: #6fb52f;"></span>{{ v }}</span>
-            </sc-for>
-          </div>
-          <p data-rise="3" style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; line-height: 1.68; color: #5a7089; text-wrap: pretty;">We believe in doing good work, keeping our word, and building relationships that last.</p>
+          <h3 data-pillar-title="" style="margin: 15px 0 14px; max-width: 15ch; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-weight: 500; letter-spacing: -.022em; font-size: clamp(21px, 2.05vw, 28px); line-height: 1.14; color: #0b1f33; text-wrap: balance;">What matters to us</h3>
+          <span data-pillar-rule="" style="display: block; width: 52px; height: 2px; border-radius: 2px; background: #5fae3b; margin-bottom: clamp(24px, 2.4vw, 32px);"></span>
+          <ul data-value-grid="" style="display: grid; grid-template-columns: minmax(0, 1fr); list-style: none; margin: 0; padding: 0; column-gap: clamp(16px, 1.8vw, 26px);">
+              <li data-value-row="" data-value-i="1" style="position: relative; display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: baseline; column-gap: 12px; padding: 13px 8px 13px 0; border-top: 1px solid #dce5ec;">
+                <span aria-hidden="" data-value-bar="" style="position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: #5fae3b;"></span>
+                <span data-value-num="" style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .06em; color: #1769aa;">01</span>
+                <span data-value-label="" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Honesty</span>
+              </li>
+              <li data-value-row="" data-value-i="2" style="position: relative; display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: baseline; column-gap: 12px; padding: 13px 8px 13px 0; border-top: 1px solid #dce5ec;">
+                <span aria-hidden="" data-value-bar="" style="position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: #5fae3b;"></span>
+                <span data-value-num="" style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .06em; color: #1769aa;">02</span>
+                <span data-value-label="" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Quality</span>
+              </li>
+              <li data-value-row="" data-value-i="3" style="position: relative; display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: baseline; column-gap: 12px; padding: 13px 8px 13px 0; border-top: 1px solid #dce5ec;">
+                <span aria-hidden="" data-value-bar="" style="position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: #5fae3b;"></span>
+                <span data-value-num="" style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .06em; color: #1769aa;">03</span>
+                <span data-value-label="" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Transparency</span>
+              </li>
+              <li data-value-row="" data-value-i="4" style="position: relative; display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: baseline; column-gap: 12px; padding: 13px 8px 13px 0; border-top: 1px solid #dce5ec;">
+                <span aria-hidden="" data-value-bar="" style="position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: #5fae3b;"></span>
+                <span data-value-num="" style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .06em; color: #1769aa;">04</span>
+                <span data-value-label="" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Responsibility</span>
+              </li>
+              <li data-value-row="" data-value-full="" data-value-i="5" style="position: relative; display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: baseline; column-gap: 12px; padding: 13px 8px 13px 0; border-top: 1px solid #dce5ec;">
+                <span aria-hidden="" data-value-bar="" style="position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: #5fae3b;"></span>
+                <span data-value-num="" style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .06em; color: #1769aa;">05</span>
+                <span data-value-label="" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Customer first</span>
+              </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -464,31 +540,35 @@
   </section>
 
   <footer style="border-top: 1px solid #e2e9f0; padding: clamp(40px, 6vw, 72px) clamp(20px, 6vw, 80px) 32px;">
-    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 165px), 1fr)); gap: clamp(24px, 4vw, 48px);">
+    <div data-footer-grid="" style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(24px, 4vw, 48px);">
       <div style="display: flex; flex-direction: column; gap: 12px; max-width: 300px;">
         <img src="media/envex-logo.png" alt="Envex Energy" style="display: block; align-self: flex-start; width: auto; height: 86px; object-fit: contain; margin-left: -4px;">
-        <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; color: #4a6076; text-wrap: pretty;">Rooftop solar designed, installed and maintained by one accountable team.</p>
+        <p style="margin: 0; max-width: 24ch; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(17px, 1.5vw, 19px); font-weight: 600; letter-spacing: -.016em; line-height: 1.34; color: #0b1f33; text-wrap: pretty;">Rooftop solar designed, installed and maintained by one accountable team.</p>
+        <p style="display: flex; align-items: flex-start; gap: 9px; margin: 4px 0 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .18em; line-height: 1.55; text-transform: uppercase; color: #2f5d1c;"><span aria-hidden="true" style="flex: 0 0 auto; align-self: flex-start; width: 5px; height: 5px; margin-top: 5px; border-radius: 50%; background: #5fae3b;"></span>Good solar starts with good decisions</p>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
-        <h4 style="margin: 0 0 4px; font-size: 11px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: #5e7286;">Company</h4>
+        <h4 style="margin: 0 0 4px; font-size: 11px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: #5d7590;">Company</h4>
         <a href="#about" style="font-size: 15px; color: #0c1f33;">About us</a>
         <a href="#why" style="font-size: 15px; color: #0c1f33;">Why choose us</a>
         <a href="#process" style="font-size: 15px; color: #0c1f33;">Our process</a>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
-        <h4 style="margin: 0 0 4px; font-size: 11px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: #5e7286;">Solutions</h4>
+        <h4 style="margin: 0 0 4px; font-size: 11px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: #5d7590;">Solutions</h4>
         <a href="#solutions" style="font-size: 15px; color: #0c1f33;">Rooftop solar</a>
         <a href="#solutions" style="font-size: 15px; color: #0c1f33;">Commercial &amp; industrial</a>
         <a href="#services" style="font-size: 15px; color: #0c1f33;">Service &amp; maintenance</a>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
-        <h4 style="margin: 0 0 4px; font-size: 11px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: #5e7286;">Contact</h4>
+        <h4 style="margin: 0 0 4px; font-size: 11px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: #5d7590;">Contact</h4>
         <a href="tel:+910000000000" style="font-size: 15px; color: #0c1f33;">+91 00000 00000</a>
         <a href="mailto:hello@envexenergy.com" style="font-size: 15px; color: #0c1f33;">hello@envexenergy.com</a>
         <a href="#b2b" style="font-size: 15px; color: #0c1f33;">B2B inquiry</a>
       </div>
     </div>
-    <p style="max-width: 1200px; margin: clamp(28px, 5vw, 56px) auto 0; padding-top: 22px; border-top: 1px solid #eef2f6; font-size: 14px; color: #5e7286;">© 2026 Envex Energy. All rights reserved. Placeholder brand assets and contact details — to be replaced with client-supplied details.</p>
+    <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px 28px; max-width: 1200px; margin: clamp(28px, 5vw, 56px) auto 0; padding-top: 22px; border-top: 1px solid #e4ebf2;">
+      <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14px; color: #4a6076;">© 2026 Envex Energy. All rights reserved.</p>
+      <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13px; color: #5d7590;">Brand assets and contact details are placeholders pending client-supplied material.</p>
+    </div>
   </footer>
 
   <sc-if value="{{ detailOpen }}" hint-placeholder-val="{{ false }}">
@@ -1000,7 +1080,7 @@ class Component extends DCLogic {
       iconWrapStyle: 'display: grid; place-items: center; flex: 0 0 auto; width: 28px; height: 28px; border-radius: 9px; background: rgba(143,209,79,.12); box-shadow: inset 0 0 0 1px rgba(143,209,79,.26); color: #a8de73;',
       itemStyle: mob
         ? 'display: flex; align-items: center; gap: 13px; flex: 0 0 auto; width: 76vw; max-width: 310px; padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);'
-        : 'display: flex; align-items: center; justify-content: center; gap: 12px; flex: 1 1 0; min-width: 0; min-height: 44px; padding: 0 clamp(14px, 1.6vw, 26px); border-left: ' + (i === 0 ? 'none' : '1px solid rgba(255,255,255,.13)') + ';'
+        : 'display: flex; align-items: flex-start; justify-content: flex-start; gap: 12px; flex: 1 1 0; min-width: 0; min-height: 44px; padding: 0 clamp(14px, 1.6vw, 26px); '
     }));
     const sc = this.state.scrolled;
 
@@ -1063,8 +1143,8 @@ class Component extends DCLogic {
       coreValues: ['Honesty', 'Quality', 'Transparency', 'Responsibility', 'Customer First'],
       heroTextStyle: 'display: flex; flex-direction: column; align-items: ' + (mob ? 'center' : 'flex-start') + '; text-align: ' + (mob ? 'center' : 'left') + '; gap: 0; width: 100%; max-width: ' + (mob ? '560px' : colPct) + '; margin: ' + (mob ? '0 auto' : '0') + '; animation: envexRise .9s ease both;',
       heroEyebrowStyle: 'display: inline-flex; align-items: center; gap: 10px; margin: 0; padding: 8px 16px 8px 13px; border-radius: 999px; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08); backdrop-filter: blur(8px); font-family: ' + BODY + '; font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.92);',
-      heroMetaStyle: 'display: flex; flex-wrap: wrap; align-items: center; justify-content: ' + (mob ? 'center' : 'flex-start') + '; gap: ' + (mob ? '8px 18px' : '10px 28px') + '; margin: ' + (mob ? '26px 0 0' : '32px 0 0') + '; padding-top: ' + (mob ? '22px' : '26px') + '; border-top: 1px solid rgba(255,255,255,.16); width: 100%; max-width: ' + (mob ? '400px' : '560px') + ';',
-      heroMetaItemStyle: 'display: inline-flex; align-items: center; font-family: ' + BODY + '; font-size: ' + (mob ? '11.5px' : '12px') + '; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.78); white-space: nowrap;',
+      heroMetaStyle: 'display: flex; flex-wrap: wrap; align-items: center; justify-content: ' + (mob ? 'center' : 'flex-start') + '; gap: ' + (mob ? '8px 18px' : '10px 28px') + '; margin: ' + (mob ? '26px 0 0' : '32px 0 0') + '; padding-top: ' + (mob ? '20px' : '24px') + '; width: 100%; max-width: ' + (mob ? '400px' : '560px') + ';',
+      heroMetaItemStyle: 'display: inline-flex; align-items: center; gap: 9px; font-family: ' + BODY + '; font-size: ' + (mob ? '11.5px' : '12px') + '; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.78); white-space: nowrap;',
       heroH1Style: 'margin: ' + (mob ? '22px 0 0' : '26px 0 0') + '; font-family: ' + DISPLAY + '; font-size: ' + h1Size + '; font-weight: 500; line-height: 1.1; letter-spacing: -.018em; max-width: 100%; white-space: ' + (mob ? 'normal' : 'nowrap') + '; text-shadow: 0 2px 40px rgba(3,20,39,.45);',
       heroH1SoftStyle: 'display: block; font-weight: 500; color: rgba(255,255,255,.62);',
       heroSubStyle: 'margin: ' + (mob ? '16px 0 0' : '20px 0 0') + '; font-family: ' + BODY + '; font-size: ' + (mob ? '17px' : 'clamp(18px, 1.5vw, 20px)') + '; font-weight: 400; line-height: 1.55; color: rgba(255,255,255,.85); max-width: 480px; text-wrap: pretty;',
@@ -1072,7 +1152,7 @@ class Component extends DCLogic {
       heroCtaStyle: 'display: inline-flex; align-items: center; justify-content: ' + (mob ? 'center' : 'flex-start') + '; gap: 14px; ' + (mob ? 'flex: 1 1 100%; ' : '') + 'padding: 7px 7px 7px 26px; border-radius: 999px; background: #ffffff; color: #05264a; font-family: ' + BODY + '; font-size: 16.5px; font-weight: 600; min-height: 52px; box-sizing: border-box; white-space: nowrap; box-shadow: 0 10px 24px rgba(3,20,39,.3); transition: transform .2s ease, box-shadow .2s ease;',
       heroGhostStyle: 'display: inline-flex; align-items: center; justify-content: center; ' + (mob ? 'flex: 1 1 100%; ' : '') + 'padding: 15px 26px; border-radius: 999px; border: 1px solid rgba(255,255,255,.55); color: #ffffff; font-family: ' + BODY + '; font-size: 16.5px; font-weight: 600; min-height: 52px; box-sizing: border-box; white-space: nowrap; transition: background .2s ease, border-color .2s ease;',
       stripOuterStyle: 'position: relative; z-index: 2; flex: 0 0 auto; padding-top: ' + (mob ? '48px' : '110px') + '; background: linear-gradient(180deg, rgba(3,20,39,0) 0%, rgba(3,20,39,.34) 34%, rgba(3,20,39,.74) 68%, rgba(3,20,39,.92) 100%);',
-      stripInnerStyle: 'display: flex; align-items: ' + (mob ? 'stretch' : 'center') + '; gap: ' + (mob ? '12px' : '0') + '; max-width: 1560px; margin: 0 auto; padding: ' + (mob ? '4px 20px 26px' : '0 clamp(18px, 3vw, 44px) clamp(22px, 2.2vw, 32px)') + '; box-sizing: border-box;' + (mob ? ' overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;' : ''),
+      stripInnerStyle: 'display: flex; align-items: stretch; gap: ' + (mob ? '12px' : 'clamp(18px, 3vw, 54px)') + '; max-width: 1560px; margin: 0 auto; padding: ' + (mob ? '4px 20px 26px' : '0 clamp(18px, 3vw, 44px) clamp(22px, 2.2vw, 32px)') + '; box-sizing: border-box;' + (mob ? ' overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;' : ''),
       closeDrop,
       cancelClose: () => clearTimeout(this._closeT),
       // Grace period: moving between a trigger and its panel (or across triggers) re-enters a

@@ -23,7 +23,41 @@
   @keyframes envexRise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
   [data-reveal].envex-in { opacity: 1 !important; transform: none !important; }
   /* Pillars go 3 → 1: auto-fit seated two columns across a wide middle band, orphaning Core values. */
+  [data-footer-grid] { grid-template-columns: minmax(0, 1fr); }
   @media (min-width: 600px) { [data-footer-grid] { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  [data-step-grid], [data-expect-grid], [data-lens-grid], [data-lens-items] { grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 620px) {
+    [data-step-grid] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    [data-expect-grid] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    [data-lens-items] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 1000px) {
+    [data-step-grid] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    [data-expect-grid] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    [data-lens-grid] { grid-template-columns: 0.85fr 1.15fr; align-items: start; }
+  }
+  [data-step] [data-step-tick] { transform: scaleX(0); transform-origin: left center; transition: transform .7s cubic-bezier(.22,1,.36,1); }
+  [data-reveal].envex-in [data-step] [data-step-tick] { transform: scaleX(1); }
+  [data-reveal].envex-in [data-step][data-step-i="1"] [data-step-tick] { transition-delay: .08s; }
+  [data-reveal].envex-in [data-step][data-step-i="2"] [data-step-tick] { transition-delay: .2s; }
+  [data-reveal].envex-in [data-step][data-step-i="3"] [data-step-tick] { transition-delay: .32s; }
+  [data-reveal].envex-in [data-step][data-step-i="4"] [data-step-tick] { transition-delay: .44s; }
+  [data-step] [data-step-title] { transition: color .35s ease; }
+  [data-step]:hover [data-step-title] { color: #1769aa; }
+  /* Breathing CTA: a slow shadow/scale pulse on the disc, stilled on hover so the click feels settled. */
+  @keyframes envexBreathe { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(47,109,28,.3); } 50% { transform: scale(1.06); box-shadow: 0 0 0 14px rgba(47,109,28,0); } }
+  [data-pulse-cta] { transition: background .4s ease, box-shadow .4s ease, transform .4s cubic-bezier(.22,1,.36,1); }
+  [data-pulse-cta] [data-pulse-disc] { animation: envexBreathe 2.8s cubic-bezier(.4,0,.6,1) infinite; transition: background .3s ease, transform .35s cubic-bezier(.22,1,.36,1); }
+  [data-pulse-cta]:hover { transform: translateY(-2px); box-shadow: 0 26px 52px -34px rgba(8,36,70,.4); }
+  [data-pulse-cta]:hover [data-pulse-disc] { animation-play-state: paused; background: #2f6d1c; transform: translateX(3px); }
+  [data-pulse-cta]:focus-visible { outline: 2px solid #1769aa; outline-offset: 4px; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-pulse-cta] [data-pulse-disc] { animation: none !important; transform: none !important; }
+    [data-pulse-cta]:hover { transform: none !important; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-step] [data-step-tick] { transform: none !important; transition: none !important; }
+  }
   @media (min-width: 900px) { [data-footer-grid] { grid-template-columns: 1.5fr 1fr 1fr 1fr; } }
   @media (min-width: 760px) {
     [data-pillar-grid] { grid-template-columns: 0.94fr 0.94fr 1.12fr !important; }
@@ -39,10 +73,12 @@
   [data-value-row] [data-value-label] { display: inline-block; transition: transform .38s cubic-bezier(.22,1,.36,1), color .32s ease; }
   [data-value-row] [data-value-num] { transition: color .32s ease; }
   /* 01–04 pair up above 1000px so the values block stops running taller than Vision/Mission. */
-  @media (min-width: 1000px) {
-    [data-value-grid] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (min-width: 1040px) {
+    [data-value-grid] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
     [data-value-grid] > [data-value-full] { grid-column: 1 / -1; }
   }
+  [data-value-row] [data-value-num] { transition: transform .4s cubic-bezier(.22,1,.36,1), background .35s ease; }
+  [data-value-row]:hover [data-value-num] { transform: rotate(45deg) scale(1.25); background: #2f6d1c; }
   [data-value-row] [data-value-bar] { transform: scaleX(0); transform-origin: left center; transition: transform .45s cubic-bezier(.22,1,.36,1); }
   [data-value-row] { opacity: 0; transform: translateY(12px); transition: opacity .58s cubic-bezier(.22,1,.36,1), transform .58s cubic-bezier(.22,1,.36,1), background .32s ease; }
   [data-reveal].envex-in [data-value-row] { opacity: 1; transform: none; }
@@ -54,11 +90,11 @@
   [data-value-row]:hover [data-value-bar] { transform: scaleX(1); }
   [data-value-row]:hover { background: linear-gradient(90deg, rgba(95,174,59,.08) 0%, rgba(95,174,59,0) 76%); }
   [data-value-row]:hover [data-value-label] { transform: translateX(4px); color: #2a6019; }
-  [data-value-row]:hover [data-value-num] { color: #2f6d1c; }
   [data-value-row]:hover [data-value-label] { color: #0b1f33; }
   @media (prefers-reduced-motion: reduce) {
     [data-pillar] [data-pillar-title], [data-value-row], [data-value-row] [data-value-label], [data-value-row] [data-value-bar] { transition: none !important; transform: none !important; }
     [data-value-row] { opacity: 1 !important; }
+    [data-value-row] [data-value-num] { transition: none !important; }
   }
   /* About: staggered inner rise, clip-path image reveal, and thin-rule column hover.
      These need parent-reveal-state or keyframe reach that inline styles can't express. */
@@ -85,6 +121,8 @@
   [data-sol-row]:hover [data-sol-bar] { transform: scaleY(1); opacity: 1; }
   [data-sol-row] [data-sol-icon] { transition: background .3s ease, transform .38s cubic-bezier(.22,.68,.3,1); }
   [data-sol-row]:hover [data-sol-icon] { background: rgba(255,255,255,.15); transform: translateY(-2px); }
+  [data-sol-row] [data-sol-arrow] { animation: envexBreathe 2.8s cubic-bezier(.4,0,.6,1) infinite; }
+  [data-sol-row]:hover [data-sol-arrow] { animation-play-state: paused; }
   [data-sol-row]:focus-visible { outline: 2px solid #9ed46a; outline-offset: -3px; }
   /* Why: image reveal, process-line draw, dot pulse, and per-accent row hover —
      all need parent-state or keyframe reach that inline styles can't express. */
@@ -120,7 +158,7 @@
     [data-reveal].envex-in [data-pulse] { animation: none !important; }
     [data-trust], [data-trust] [data-trust-rule] { transition: none !important; transform: none !important; }
   }
-  @media (prefers-reduced-motion: reduce) { [data-sol-row] [data-sol-arrow], [data-sol-row] [data-sol-bar], [data-sol-row] [data-sol-icon] { transition: none !important; transform: none !important; } }
+  @media (prefers-reduced-motion: reduce) { [data-sol-row] [data-sol-arrow], [data-sol-row] [data-sol-bar], [data-sol-row] [data-sol-icon] { transition: none !important; transform: none !important; animation: none !important; } }
   [data-reveal].envex-in [data-accent] { transform: scaleX(1); }
   @media (prefers-reduced-motion: reduce) { [data-rise], [data-accent] { opacity: 1 !important; transform: none !important; transition: none !important; } }
   @keyframes envexLand { 0% { box-shadow: 0 0 0 0 rgba(143,209,79,0); } 22% { box-shadow: 0 0 0 3px rgba(143,209,79,.5); } 100% { box-shadow: 0 0 0 10px rgba(143,209,79,0); } }
@@ -262,12 +300,11 @@
         </figure>
       </div>
 
-      <div data-pillar-grid="" style="display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(34px, 3.6vw, 56px); margin-top: clamp(46px, 5.5vw, 88px);">
+      <div data-pillar-grid="" style="display: grid; align-items: start; grid-template-columns: minmax(0, 1fr); gap: clamp(34px, 3.6vw, 56px); margin-top: clamp(46px, 5.5vw, 88px);">
 
         <div data-pillar="" data-pillar-key="vision" data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(22px); transition: opacity .72s cubic-bezier(.22,1,.36,1) .04s, transform .72s cubic-bezier(.22,1,.36,1) .04s; padding: clamp(28px, 3.2vw, 42px) clamp(20px, 2.4vw, 34px) clamp(24px, 2.6vw, 34px) 0;">
           <div style="display: flex; align-items: baseline; gap: 11px;">
-            <span style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .1em; color: #145da8;">01</span>
-            <span data-sub="vision" id="vision" style="scroll-margin-top: 96px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #4f6681;">Vision</span>
+            <span data-sub="vision" id="vision" style="scroll-margin-top: 96px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgb(79, 102, 129)">Vision</span>
           </div>
           <h3 data-pillar-title="" style="margin: 15px 0 14px; max-width: 16ch; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-weight: 500; letter-spacing: -.022em; font-size: clamp(21px, 2.05vw, 28px); line-height: 1.14; color: #0b1f33; text-wrap: balance;">A cleaner energy future</h3>
           <span data-pillar-rule="" style="display: block; width: 52px; height: 2px; border-radius: 2px; background: #145da8; margin-bottom: 18px;"></span>
@@ -276,8 +313,7 @@
 
         <div data-pillar="" data-pillar-key="mission" data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(22px); transition: opacity .72s cubic-bezier(.22,1,.36,1) .12s, transform .72s cubic-bezier(.22,1,.36,1) .12s; padding: clamp(28px, 3.2vw, 42px) clamp(20px, 2.4vw, 34px) clamp(24px, 2.6vw, 34px) clamp(0px, 2.4vw, 34px);">
           <div style="display: flex; align-items: baseline; gap: 11px;">
-            <span style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .1em; color: #8a5605;">02</span>
-            <span data-sub="mission" id="mission" style="scroll-margin-top: 96px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #4f6681;">Mission</span>
+            <span data-sub="mission" id="mission" style="scroll-margin-top: 96px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgb(79, 102, 129)">Mission</span>
           </div>
           <h3 data-pillar-title="" style="margin: 15px 0 14px; max-width: 14ch; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-weight: 500; letter-spacing: -.022em; font-size: clamp(21px, 2.05vw, 28px); line-height: 1.14; color: #0b1f33; text-wrap: balance;">Making solar easier</h3>
           <span data-pillar-rule="" style="display: block; width: 52px; height: 2px; border-radius: 2px; background: #c88a1e; margin-bottom: 18px;"></span>
@@ -286,36 +322,38 @@
 
         <div data-pillar="" data-pillar-key="values" data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(22px); transition: opacity .72s cubic-bezier(.22,1,.36,1) .2s, transform .72s cubic-bezier(.22,1,.36,1) .2s; padding: clamp(28px, 3.2vw, 42px) 0 clamp(24px, 2.6vw, 34px) clamp(0px, 2.4vw, 34px);">
           <div style="display: flex; align-items: baseline; gap: 11px;">
-            <span style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .1em; color: #2f6d1c;">03</span>
-            <span data-sub="values" id="values" style="scroll-margin-top: 96px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #4f6681;">Core values</span>
+            <span data-sub="values" id="values" style="scroll-margin-top: 96px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgb(79, 102, 129)">Core values</span>
           </div>
           <h3 data-pillar-title="" style="margin: 15px 0 14px; max-width: 15ch; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-weight: 500; letter-spacing: -.022em; font-size: clamp(21px, 2.05vw, 28px); line-height: 1.14; color: #0b1f33; text-wrap: balance;">What matters to us</h3>
           <span data-pillar-rule="" style="display: block; width: 52px; height: 2px; border-radius: 2px; background: #5fae3b; margin-bottom: clamp(24px, 2.4vw, 32px);"></span>
           <ul data-value-grid="" style="display: grid; grid-template-columns: minmax(0, 1fr); list-style: none; margin: 0; padding: 0; column-gap: clamp(16px, 1.8vw, 26px);">
-              <li data-value-row="" data-value-i="1" style="position: relative; display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: baseline; column-gap: 12px; padding: 13px 8px 13px 0; border-top: 1px solid #dce5ec;">
+              <li data-value-row="" data-value-i="1" style="position: relative; display: grid; grid-template-columns: 16px minmax(0, 1fr); align-items: start; column-gap: 14px; padding: 13px 8px 13px 0;">
                 <span aria-hidden="" data-value-bar="" style="position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: #5fae3b;"></span>
-                <span data-value-num="" style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .06em; color: #1769aa;">01</span>
-                <span data-value-label="" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Honesty</span>
+                <span data-value-num="" aria-hidden="true" style="justify-self: center; align-self: start; margin-top: 6px; width: 7px; height: 7px; border-radius: 1px; transform: rotate(45deg); background: #5fae3b;"></span>
+                <span data-value-label="" style="display: block; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Honesty</span>
               </li>
-              <li data-value-row="" data-value-i="2" style="position: relative; display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: baseline; column-gap: 12px; padding: 13px 8px 13px 0; border-top: 1px solid #dce5ec;">
+              <li data-value-row="" data-value-i="2" style="position: relative; display: grid; grid-template-columns: 16px minmax(0, 1fr); align-items: start; column-gap: 14px; padding: 13px 8px 13px 0;">
                 <span aria-hidden="" data-value-bar="" style="position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: #5fae3b;"></span>
-                <span data-value-num="" style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .06em; color: #1769aa;">02</span>
-                <span data-value-label="" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Quality</span>
+                <span data-value-num="" aria-hidden="true" style="justify-self: center; align-self: start; margin-top: 6px; width: 7px; height: 7px; border-radius: 1px; transform: rotate(45deg); background: #5fae3b;"></span>
+                <span data-value-label="" style="display: block; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Quality</span>
               </li>
-              <li data-value-row="" data-value-i="3" style="position: relative; display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: baseline; column-gap: 12px; padding: 13px 8px 13px 0; border-top: 1px solid #dce5ec;">
+              <li data-value-row="" data-value-i="3" style="position: relative; display: grid; grid-template-columns: 16px minmax(0, 1fr); align-items: start; column-gap: 14px; padding: 13px 8px 13px 0;">
                 <span aria-hidden="" data-value-bar="" style="position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: #5fae3b;"></span>
-                <span data-value-num="" style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .06em; color: #1769aa;">03</span>
-                <span data-value-label="" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Transparency</span>
+                <span data-value-num="" aria-hidden="true" style="justify-self: center; align-self: start; margin-top: 6px; width: 7px; height: 7px; border-radius: 1px; transform: rotate(45deg); background: #5fae3b;"></span>
+                <span data-value-label="" style="display: block; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Transparency</span>
               </li>
-              <li data-value-row="" data-value-i="4" style="position: relative; display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: baseline; column-gap: 12px; padding: 13px 8px 13px 0; border-top: 1px solid #dce5ec;">
+              <li data-value-row="" data-value-i="4" style="position: relative; display: grid; grid-template-columns: 16px minmax(0, 1fr); align-items: start; column-gap: 14px; padding: 13px 8px 13px 0;">
                 <span aria-hidden="" data-value-bar="" style="position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: #5fae3b;"></span>
-                <span data-value-num="" style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .06em; color: #1769aa;">04</span>
-                <span data-value-label="" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Responsibility</span>
+                <span data-value-num="" aria-hidden="true" style="justify-self: center; align-self: start; margin-top: 6px; width: 7px; height: 7px; border-radius: 1px; transform: rotate(45deg); background: #5fae3b;"></span>
+                <span data-value-label="" style="display: block; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Responsibility</span>
               </li>
-              <li data-value-row="" data-value-full="" data-value-i="5" style="position: relative; display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: baseline; column-gap: 12px; padding: 13px 8px 13px 0; border-top: 1px solid #dce5ec;">
+              <li data-value-row="" data-value-full="" data-value-i="5" style="position: relative; display: grid; grid-template-columns: 16px minmax(0, 1fr); align-items: start; column-gap: 14px; padding: 13px 8px 13px 0;">
                 <span aria-hidden="" data-value-bar="" style="position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: #5fae3b;"></span>
-                <span data-value-num="" style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .06em; color: #1769aa;">05</span>
-                <span data-value-label="" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Customer first</span>
+                <span data-value-num="" aria-hidden="true" style="justify-self: center; align-self: start; margin-top: 6px; width: 7px; height: 7px; border-radius: 1px; transform: rotate(45deg); background: #5fae3b;"></span>
+                <span style="display: flex; flex-direction: column; gap: 5px; min-width: 0;">
+                  <span data-value-label="" style="display: block; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #0b1f33;">Customer first</span>
+                  <span style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 1.5; letter-spacing: -.002em; color: #4f6681; text-wrap: pretty;">Every decision starts with the customer.</span>
+                </span>
               </li>
           </ul>
         </div>
@@ -399,34 +437,117 @@
     </div>
   </section>
 
-  <section id="process" style="min-height: 100svh; display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; scroll-margin-top: 96px; padding: clamp(52px, 6vw, 92px) clamp(20px, 6vw, 80px);">
+  <section id="process" style="position: relative; box-sizing: border-box; scroll-margin-top: 96px; padding: clamp(52px, 6vw, 88px) clamp(20px, 6vw, 80px); background: #f5f8fb; border-top: 1px solid #e6edf4;">
     <div style="max-width: 1200px; margin: 0 auto;">
-      <div data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1), transform .75s cubic-bezier(.22,.68,.3,1); margin-bottom: clamp(30px, 5vw, 56px);">
-        <p style="margin: 0 0 16px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: #3f5d7a;">Our process</p>
-        <h2 style="margin: 0; max-width: 640px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(27px, 3.5vw, 40px); line-height: 1.16; font-weight: 600; letter-spacing: -.021em; color: #0c1f33; text-wrap: balance;">Four steps from first call to first unit</h2>
+
+      <div data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(20px); transition: opacity .72s cubic-bezier(.22,1,.36,1) 0s, transform .72s cubic-bezier(.22,1,.36,1) 0s; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: clamp(22px, 3.4vw, 56px); align-items: end;">
+        <div>
+          <p style="margin: 0 0 clamp(16px, 1.8vw, 22px); font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #1769aa">Our process</p>
+          <h2 style="margin: 0; max-width: 17ch; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(28px, 3.6vw, 46px); line-height: 1.06; font-weight: 500; letter-spacing: -.026em; color: #0b1f33; text-wrap: balance;">Four steps from first call to first unit</h2>
+        </div>
+        <p style="margin: 0; max-width: 46ch; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: clamp(16px, 1.45vw, 17.5px); line-height: 1.64; color: #3b5570; text-wrap: pretty;">Every project runs the same way, whether it's a single rooftop or a multi site rollout so you always know which stage you're at and what happens next.</p>
       </div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: clamp(18px, 3vw, 36px);">
-        <div data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.22,.68,.3,1) .04s, transform .7s cubic-bezier(.22,.68,.3,1) .04s; display: flex; flex-direction: column; gap: 10px; padding-top: 20px; border-top: 3px solid #0b4f9c;">
-          <span style="font-size: 12px; font-weight: 600; letter-spacing: .2em; color: #0b4f9c;">01</span>
-          <h3 style="margin: 0; font-family: 'General Sans', Manrope, Helvetica, Arial, sans-serif; font-weight: 600; letter-spacing: -.012em; font-size: 17.5px; color: #0c1f33;">Consultation</h3>
-          <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; line-height: 1.68; color: #5a7089; text-wrap: pretty;">We review your bills, roof area and goals, then tell you honestly whether solar makes sense for your site.</p>
-        </div>
-        <div data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.22,.68,.3,1) .12s, transform .7s cubic-bezier(.22,.68,.3,1) .12s; display: flex; flex-direction: column; gap: 10px; padding-top: 20px; border-top: 3px solid #0b4f9c;">
-          <span style="font-size: 12px; font-weight: 600; letter-spacing: .2em; color: #0b4f9c;">02</span>
-          <h3 style="margin: 0; font-family: 'General Sans', Manrope, Helvetica, Arial, sans-serif; font-weight: 600; letter-spacing: -.012em; font-size: 17.5px; color: #0c1f33;">Design &amp; quote</h3>
-          <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; line-height: 1.68; color: #5a7089; text-wrap: pretty;">A system layout, expected generation range and an itemised quote — with the assumptions behind the numbers written down.</p>
-        </div>
-        <div data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.22,.68,.3,1) .2s, transform .7s cubic-bezier(.22,.68,.3,1) .2s; display: flex; flex-direction: column; gap: 10px; padding-top: 20px; border-top: 3px solid #ffb84d;">
-          <span style="font-size: 12px; font-weight: 600; letter-spacing: .2em; color: #8a5806;">03</span>
-          <h3 style="margin: 0; font-family: 'General Sans', Manrope, Helvetica, Arial, sans-serif; font-weight: 600; letter-spacing: -.012em; font-size: 17.5px; color: #0c1f33;">Installation</h3>
-          <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; line-height: 1.68; color: #5a7089; text-wrap: pretty;">Mounting, panels, inverter and wiring installed by our own crew, with a scheduled window and a site left clean.</p>
-        </div>
-        <div data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.22,.68,.3,1) .28s, transform .7s cubic-bezier(.22,.68,.3,1) .28s; display: flex; flex-direction: column; gap: 10px; padding-top: 20px; border-top: 3px solid #ffb84d;">
-          <span style="font-size: 12px; font-weight: 600; letter-spacing: .2em; color: #8a5806;">04</span>
-          <h3 style="margin: 0; font-family: 'General Sans', Manrope, Helvetica, Arial, sans-serif; font-weight: 600; letter-spacing: -.012em; font-size: 17.5px; color: #0c1f33;">Power up</h3>
-          <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; line-height: 1.68; color: #5a7089; text-wrap: pretty;">Commissioning, approvals and a walkthrough of monitoring, so you know what your system should be producing.</p>
+
+      <ol data-step-grid="" data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(20px); transition: opacity .72s cubic-bezier(.22,1,.36,1) .06s, transform .72s cubic-bezier(.22,1,.36,1) .06s; margin: clamp(32px, 3.6vw, 52px) 0 0; padding: 0; display: grid; gap: clamp(26px, 3vw, 38px);">
+          <li data-step="" data-step-i="1" style="position: relative; padding-top: 22px; list-style: none;">
+            <span aria-hidden="true" data-step-tick="" style="position: absolute; left: 0; top: 0; width: 100%; height: 2px; background: #1769aa;"></span>
+            <span style="display: block; margin-bottom: 12px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .12em; color: #1769aa;">01</span>
+            <h3 data-step-title="" style="margin: 0 0 11px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(18px, 1.6vw, 21px); font-weight: 600; letter-spacing: -.016em; line-height: 1.2; color: #0b1f33;">Consultation</h3>
+            <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.68; color: #52697f; text-wrap: pretty;">We review your bills, roof area and goals, then tell you honestly whether solar makes sense for your site.</p>
+            <span style="display: flex; flex-wrap: wrap; gap: 7px 14px; margin-top: 14px;"><span style="display: inline-flex; align-items: center; gap: 7px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .01em; color: #1769aa;"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #1769aa;"></span>Bill review</span><span style="display: inline-flex; align-items: center; gap: 7px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .01em; color: #1769aa;"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #1769aa;"></span>Roof assessment</span><span style="display: inline-flex; align-items: center; gap: 7px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .01em; color: #1769aa;"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #1769aa;"></span>Honest yes or no</span></span>
+          </li>
+          <li data-step="" data-step-i="2" style="position: relative; padding-top: 22px; list-style: none;">
+            <span aria-hidden="true" data-step-tick="" style="position: absolute; left: 0; top: 0; width: 100%; height: 2px; background: #1a7fbf;"></span>
+            <span style="display: block; margin-bottom: 12px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .12em; color: #14618f;">02</span>
+            <h3 data-step-title="" style="margin: 0 0 11px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(18px, 1.6vw, 21px); font-weight: 600; letter-spacing: -.016em; line-height: 1.2; color: #0b1f33;">Design &amp; quote</h3>
+            <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.68; color: #52697f; text-wrap: pretty;">A system layout, expected generation range and an itemised quote — with the assumptions behind the numbers written down.</p>
+            <span style="display: flex; flex-wrap: wrap; gap: 7px 14px; margin-top: 14px;"><span style="display: inline-flex; align-items: center; gap: 7px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .01em; color: #14618f;"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #1a7fbf;"></span>System layout</span><span style="display: inline-flex; align-items: center; gap: 7px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .01em; color: #14618f;"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #1a7fbf;"></span>Generation range</span><span style="display: inline-flex; align-items: center; gap: 7px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .01em; color: #14618f;"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #1a7fbf;"></span>Itemised quote</span></span>
+          </li>
+          <li data-step="" data-step-i="3" style="position: relative; padding-top: 22px; list-style: none;">
+            <span aria-hidden="true" data-step-tick="" style="position: absolute; left: 0; top: 0; width: 100%; height: 2px; background: #c88a1e;"></span>
+            <span style="display: block; margin-bottom: 12px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .12em; color: #8a5605;">03</span>
+            <h3 data-step-title="" style="margin: 0 0 11px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(18px, 1.6vw, 21px); font-weight: 600; letter-spacing: -.016em; line-height: 1.2; color: #0b1f33;">Installation</h3>
+            <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.68; color: #52697f; text-wrap: pretty;">Mounting, panels, inverter and wiring installed by our own crew, with a scheduled window and a site left clean.</p>
+            <span style="display: flex; flex-wrap: wrap; gap: 7px 14px; margin-top: 14px;"><span style="display: inline-flex; align-items: center; gap: 7px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .01em; color: #8a5605;"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #c88a1e;"></span>Mounting</span><span style="display: inline-flex; align-items: center; gap: 7px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .01em; color: #8a5605;"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #c88a1e;"></span>Panels & inverter</span><span style="display: inline-flex; align-items: center; gap: 7px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .01em; color: #8a5605;"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #c88a1e;"></span>Wiring</span></span>
+          </li>
+          <li data-step="" data-step-i="4" style="position: relative; padding-top: 22px; list-style: none;">
+            <span aria-hidden="true" data-step-tick="" style="position: absolute; left: 0; top: 0; width: 100%; height: 2px; background: #5fae3b;"></span>
+            <span style="display: block; margin-bottom: 12px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .12em; color: #2f6d1c;">04</span>
+            <h3 data-step-title="" style="margin: 0 0 11px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(18px, 1.6vw, 21px); font-weight: 600; letter-spacing: -.016em; line-height: 1.2; color: #0b1f33;">Power up</h3>
+            <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.68; color: #52697f; text-wrap: pretty;">Commissioning, approvals and a walkthrough of monitoring, so you know what your system should be producing.</p>
+            <span style="display: flex; flex-wrap: wrap; gap: 7px 14px; margin-top: 14px;"><span style="display: inline-flex; align-items: center; gap: 7px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .01em; color: #2f6d1c;"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #5fae3b;"></span>Commissioning</span><span style="display: inline-flex; align-items: center; gap: 7px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .01em; color: #2f6d1c;"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #5fae3b;"></span>Approvals</span><span style="display: inline-flex; align-items: center; gap: 7px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: .01em; color: #2f6d1c;"><span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: #5fae3b;"></span>Monitoring walkthrough</span></span>
+          </li>
+      </ol>
+
+      <div data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(20px); transition: opacity .72s cubic-bezier(.22,1,.36,1) .1s, transform .72s cubic-bezier(.22,1,.36,1) .1s; margin-top: clamp(32px, 3.6vw, 52px);">
+        <p style="margin: 0 0 clamp(20px, 2.2vw, 26px); font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #4f6681;">What you can expect</p>
+        <div data-expect-grid="" style="display: grid; gap: clamp(22px, 2.6vw, 34px) clamp(20px, 2.4vw, 40px);">
+          <div style="display: grid; grid-template-columns: 16px minmax(0, 1fr); align-items: start; column-gap: 13px;">
+            <span aria-hidden="true" style="justify-self: center; margin-top: 6px; width: 7px; height: 7px; border-radius: 1px; transform: rotate(45deg); background: #5fae3b;"></span>
+            <div>
+              <p style="margin: 0 0 6px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #0b1f33;">Clear scope</p>
+              <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; line-height: 1.6; color: #4f6681; text-wrap: pretty;">What is included, and what is not, written down before work starts.</p>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 16px minmax(0, 1fr); align-items: start; column-gap: 13px;">
+            <span aria-hidden="true" style="justify-self: center; margin-top: 6px; width: 7px; height: 7px; border-radius: 1px; transform: rotate(45deg); background: #5fae3b;"></span>
+            <div>
+              <p style="margin: 0 0 6px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #0b1f33;">Direct communication</p>
+              <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; line-height: 1.6; color: #4f6681; text-wrap: pretty;">One point of contact from first survey to after-sales support.</p>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 16px minmax(0, 1fr); align-items: start; column-gap: 13px;">
+            <span aria-hidden="true" style="justify-self: center; margin-top: 6px; width: 7px; height: 7px; border-radius: 1px; transform: rotate(45deg); background: #5fae3b;"></span>
+            <div>
+              <p style="margin: 0 0 6px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #0b1f33;">Careful execution</p>
+              <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; line-height: 1.6; color: #4f6681; text-wrap: pretty;">Work to manufacturer and electrical-code standards, site left clean.</p>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 16px minmax(0, 1fr); align-items: start; column-gap: 13px;">
+            <span aria-hidden="true" style="justify-self: center; margin-top: 6px; width: 7px; height: 7px; border-radius: 1px; transform: rotate(45deg); background: #5fae3b;"></span>
+            <div>
+              <p style="margin: 0 0 6px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #0b1f33;">Ongoing support</p>
+              <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; line-height: 1.6; color: #4f6681; text-wrap: pretty;">Panel cleaning, inverter checks and output monitoring after handover.</p>
+            </div>
+          </div>
         </div>
       </div>
+
+      <div data-anchor-card="" data-reveal="" style="opacity: 0; transform: translateY(20px); transition: opacity .72s cubic-bezier(.22,1,.36,1) .14s, transform .72s cubic-bezier(.22,1,.36,1) .14s; margin-top: clamp(34px, 3.8vw, 56px); padding: clamp(28px, 3.2vw, 44px); border-radius: 22px; background: linear-gradient(158deg, #eaf2fa 0%, #e4eef8 54%, #e9f3ea 100%); color: #0b1f33;">
+        <div data-lens-grid="" style="display: grid; gap: clamp(26px, 3.2vw, 48px);">
+          <div>
+            <p style="margin: 0 0 clamp(14px, 1.6vw, 20px); font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #2f6d1c;">Behind every installation</p>
+            <h3 style="margin: 0; max-width: 16ch; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(23px, 2.4vw, 32px); line-height: 1.12; font-weight: 500; letter-spacing: -.024em; color: #0b1f33; text-wrap: balance;">We look beyond the panels.</h3>
+            <p style="margin: clamp(14px, 1.6vw, 20px) 0 0; max-width: 40ch; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; line-height: 1.66; color: #3b5570; text-wrap: pretty;">Four things decide whether a system performs the way the quote said it would.</p>
+          </div>
+          <div data-lens-items="" style="display: grid; gap: clamp(18px, 2.2vw, 26px) clamp(20px, 2.4vw, 34px);">
+            <div>
+              <p style="margin: 0 0 7px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 15.5px; font-weight: 600; letter-spacing: -.012em; color: #0b1f33;">Site</p>
+              <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; line-height: 1.6; color: #4f6681; text-wrap: pretty;">Roof area, orientation, shading and structural condition.</p>
+            </div>
+            <div>
+              <p style="margin: 0 0 7px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 15.5px; font-weight: 600; letter-spacing: -.012em; color: #0b1f33;">Load</p>
+              <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; line-height: 1.6; color: #4f6681; text-wrap: pretty;">What you actually consume, and what you want covered.</p>
+            </div>
+            <div>
+              <p style="margin: 0 0 7px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 15.5px; font-weight: 600; letter-spacing: -.012em; color: #0b1f33;">System</p>
+              <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; line-height: 1.6; color: #4f6681; text-wrap: pretty;">Capacity, module layout, mounting and metering.</p>
+            </div>
+            <div>
+              <p style="margin: 0 0 7px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 15.5px; font-weight: 600; letter-spacing: -.012em; color: #0b1f33;">Support</p>
+              <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px; line-height: 1.6; color: #4f6681; text-wrap: pretty;">Approvals, monitoring and maintenance after switch-on.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <a href="#solutions" onClick="{{ goSolutions }}" data-anchor-card="" data-reveal="" data-pulse-cta="" style="opacity: 0; transform: translateY(20px); transition: opacity .72s cubic-bezier(.22,1,.36,1) .18s, transform .72s cubic-bezier(.22,1,.36,1) .18s; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; margin-top: clamp(28px, 3.2vw, 44px); padding: clamp(26px, 3.2vw, 42px) clamp(24px, 3vw, 44px); border-radius: 22px; background: linear-gradient(158deg, #eaf2fa 0%, #e4eef8 54%, #e9f3ea 100%); color: #0b1f33; text-decoration: none; cursor: pointer;">
+        <span style="display: flex; flex-direction: column; gap: 9px;">
+          <span style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #2f6d1c;">Next step</span>
+          <span style="max-width: 24ch; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(20px, 2.1vw, 28px); font-weight: 500; letter-spacing: -.022em; line-height: 1.16; color: #0b1f33; text-wrap: balance;">Ready to explore solar for your site?</span>
+        </span>
+        <span data-pulse-disc="" aria-hidden="true" style="display: grid; place-items: center; flex: 0 0 auto; width: 58px; height: 58px; border-radius: 50%; background: #05264a; color: #ffffff; font-size: 20px;">→</span>
+      </a>
     </div>
   </section>
 
@@ -437,7 +558,7 @@
         <h2 style="{{ solHeadStyle }}">Systems scoped to the roof they sit on</h2>
         <div style="{{ solMetaStyle }}">
           <p style="margin: 0; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(17px, 1.55vw, 20px); font-weight: 600; letter-spacing: -.014em; line-height: 1.32; color: #ffffff; text-wrap: balance;">Your&nbsp; Roof<br>Your&nbsp; Load<br>Your&nbsp; System</p>
-          <p style="margin: 0; max-width: 620px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.7; color: rgba(255,255,255,.74); text-wrap: pretty;">Every site is different — the sun it gets, the power it draws, the roof it sits on. We size and design each system around your actual consumption and structure, so you're not paying for capacity you don't need or a system that doesn't fit.</p>
+          <p style="margin: 0; max-width: 620px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.7; color: rgba(255,255,255,.92); text-wrap: pretty;">Every site is different — the sun it gets, the power it draws, the roof it sits on. We size and design each system around your actual consumption and structure, so you're not paying for capacity you don't need or a system that doesn't fit.</p>
         </div>
       </div>
       <div style="border: 1px solid rgba(255,255,255,.12); border-radius: 22px; overflow: hidden; background: rgba(255,255,255,.045); box-shadow: 0 34px 70px -44px rgba(2,14,28,.7);">
@@ -451,7 +572,6 @@
             </span>
             <span style="{{ s.bodyStyle }}">{{ s.body }}</span>
             <span style="{{ s.arrowStyle }}">
-              <sc-if value="{{ s.showLabel }}" hint-placeholder-val="{{ true }}">Explore</sc-if>
               <span data-sol-arrow="" style="{{ s.arrowDiscStyle }}">→</span>
             </span>
           </button>
@@ -527,7 +647,7 @@
   </section>
 
   <footer style="border-top: 1px solid #e2e9f0; padding: clamp(40px, 6vw, 72px) clamp(20px, 6vw, 80px) 32px;">
-    <div data-footer-grid="" style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(24px, 4vw, 48px);">
+    <div data-footer-grid="" style="max-width: 1200px; margin: 0 auto; display: grid; gap: clamp(24px, 4vw, 48px);">
       <div style="display: flex; flex-direction: column; gap: 12px; max-width: 300px;">
         <img src="media/envex-logo.png" alt="Envex Energy" style="display: block; align-self: flex-start; width: auto; height: 86px; object-fit: contain; margin-left: -4px;">
         <p style="margin: 0; max-width: 24ch; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(17px, 1.5vw, 19px); font-weight: 600; letter-spacing: -.016em; line-height: 1.34; color: #0b1f33; text-wrap: pretty;">Rooftop solar designed, installed and maintained by one accountable team.</p>
@@ -631,17 +751,6 @@
             </sc-for>
           </div>
         </sc-if>
-
-        <h2 style="margin: clamp(46px, 6vw, 72px) 0 clamp(22px, 2.6vw, 30px); font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(24px, 2.6vw, 32px); font-weight: 600; letter-spacing: -.018em; color: #0c1f33;">How it works</h2>
-        <div style="display: flex; flex-wrap: wrap; gap: clamp(14px, 2vw, 20px);">
-          <sc-for list="{{ detail.steps }}" as="st" hint-placeholder-count="4">
-            <div style="flex: 1 1 210px; min-width: min(100%, 210px); border-top: 3px solid #0b4f9c; border-radius: 4px 4px 16px 16px; background: #ffffff; border-right: 1px solid #e4ecf4; border-bottom: 1px solid #e4ecf4; border-left: 1px solid #e4ecf4; padding: clamp(20px, 2.2vw, 26px); font-family: Manrope, Helvetica, Arial, sans-serif;">
-              <p style="margin: 0 0 12px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: .1em; color: #0b4f9c;">{{ st.n }}</p>
-              <p style="margin: 0 0 8px; font-size: 16.5px; font-weight: 600; letter-spacing: -.01em; color: #0c1f33;">{{ st.title }}</p>
-              <p style="margin: 0; font-size: 14.5px; line-height: 1.6; color: #5a7089; text-wrap: pretty;">{{ st.body }}</p>
-            </div>
-          </sc-for>
-        </div>
 
         <div style="margin-top: clamp(46px, 6vw, 72px); border: 1px solid #dde7f1; border-radius: 20px; background: #ffffff; overflow: hidden;">
           <button type="button" onClick="{{ toggleCore }}" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; padding: clamp(20px, 2.4vw, 28px); border: 0; background: none; cursor: pointer; text-align: left; font-family: inherit;">
@@ -1080,12 +1189,12 @@ class Component extends DCLogic {
       detail: det ? {
         title: det.title, icon: SICON(det.paths, 24), lead: det.lead, o1: det.o1, o2: det.o2,
         rows: det.rows.map(r => ({ name: r[0], variant: r[1], capacity: r[2] })),
-        steps: det.steps.map((st, i) => ({ n: String(i + 1).padStart(2, '0'), title: st[0], body: st[1] })),
         others: Component.SOLUTIONS.filter(s => s.id !== this.state.detail).map(s => ({
           id: s.id, icon: SICON(s.paths, 18), title: s.title, body: s.body, open: () => this.openDetail(s.id)
         }))
       } : null,
       core: Component.CORE,
+      goSolutions: this._go('#solutions'),
       solHeadStyle: 'margin: 0; font-family: ' + DISPLAY + '; font-weight: 600; letter-spacing: -.026em; line-height: 1.06; color: #ffffff; '
         + (mob ? 'font-size: clamp(26px, 7.2vw, 34px); text-wrap: balance;' : 'white-space: nowrap; font-size: clamp(30px, 3.55vw, 52px);'),
       solMetaStyle: 'display: grid; ' + (mob ? 'gap: 16px;' : 'grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: start; column-gap: clamp(28px, 4vw, 64px);')
@@ -1119,10 +1228,10 @@ class Component extends DCLogic {
         titleStyle: 'margin: 0; font-family: ' + DISPLAY + '; font-size: ' + (mob ? '17px' : 'clamp(17.5px, 1.5vw, 20px)') + '; font-weight: 600; letter-spacing: -.016em; line-height: 1.25; color: #ffffff;',
         scaleStyle: 'display: inline-flex; align-items: center; gap: 8px; margin-top: 9px; font-family: ' + BODY + '; font-size: 12.5px; font-weight: 600; letter-spacing: .02em; color: #9ed46a;',
         dotStyle: 'width: 5px; height: 5px; border-radius: 50%; background: #6fb52f;',
-        bodyStyle: 'grid-area: ' + (mob ? 'body' : 'auto') + '; margin: 0; font-family: ' + BODY + '; font-size: ' + (mob ? '14.5px' : '15.5px') + '; line-height: 1.64; color: rgba(255,255,255,.76); text-wrap: pretty;',
+        bodyStyle: 'grid-area: ' + (mob ? 'body' : 'auto') + '; margin: 0; font-family: ' + BODY + '; font-size: ' + (mob ? '14.5px' : '15.5px') + '; line-height: 1.64; color: rgba(255,255,255,.92); text-wrap: pretty;',
         arrowStyle: 'grid-area: ' + (mob ? 'arrow' : 'auto') + '; justify-self: end; display: inline-flex; align-items: center; gap: 11px; font-family: ' + BODY + '; font-size: 14px; font-weight: 600; color: rgba(255,255,255,.88); white-space: nowrap;',
         arrowDiscStyle: 'display: grid; place-items: center; width: ' + (mob ? '26px' : '34px') + '; height: ' + (mob ? '26px' : '34px') + '; border-radius: 50%; background: rgba(255,255,255,.1); color: #ffffff; font-size: ' + (mob ? '13px' : '15px') + ';',
-        showLabel: !mob
+        showLabel: false
       })),
       b2bPoints: Component.B2B,
       navBarStyle: 'position: fixed; top: 0; left: 0; right: 0; z-index: 60; will-change: background; transition: background .32s ease, box-shadow .32s ease, border-color .32s ease; background: rgba(4,26,48,0); border-bottom: 1px solid rgba(255,255,255,.18); box-shadow: none;',
