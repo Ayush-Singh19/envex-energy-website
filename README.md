@@ -8,7 +8,7 @@ Single-page marketing site for Envex Energy (solar EPC), plus five solution deta
 | --- | --- |
 | `Envex Energy Landing.dc.html` | **Source.** Edit this one. Needs `support.js` beside it. |
 | `envex-standalone-src.html` | Bundler input — same design with a preview thumbnail added. Generated from the source. |
-| `Envex Energy Landing.html` | **Compiled standalone build.** Opens offline in any browser, no server or assets needed (~14 MB, media inlined). Do not hand-edit. |
+| `Envex Energy Landing.html` | **Generated standalone build — not tracked in git.** Opens offline in any browser, no server or assets needed (~15 MB, media inlined). Regenerate from the source via Claude Design when you need a shareable file; do not hand-edit. |
 | `support.js` | Runtime required by the source file. |
 | `media/` | Logos, hero video/stills, About photo, Why-section consultation photo. |
 | `frames/` | Working stills used while designing the hero. Not referenced by the site. |
@@ -16,8 +16,12 @@ Single-page marketing site for Envex Energy (solar EPC), plus five solution deta
 
 ## Viewing
 
-- Quickest: open `Envex Energy Landing.html` directly in a browser.
-- To work on it: open `Envex Energy Landing.dc.html` (keep `support.js` and `media/` alongside).
+- To work on it: serve the repo root over http and open `Envex Energy Landing.dc.html` (keep `support.js`, `image-slot.js` and `media/` alongside). It needs http rather than file://, and a network connection — the runtime pulls React from a CDN.
+
+      python -m http.server 8080
+      # http://127.0.0.1:8080/Envex%20Energy%20Landing.dc.html
+
+- To share an offline copy: regenerate `Envex Energy Landing.html` from the source via Claude Design. It is a build artifact and is no longer tracked, so a fresh clone will not have it — and any stale copy on disk can silently lag the source.
 
 ## Page structure
 

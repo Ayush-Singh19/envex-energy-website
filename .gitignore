@@ -4,3 +4,8 @@ Thumbs.db
 
 # Unused source material (~90MB): render frames, hero video takes, raw uploads
 raw/
+
+# Generated standalone build (~15MB, media inlined). Regenerate from
+# "Envex Energy Landing.dc.html" via Claude Design when you need a
+# shareable offline file; it is an artifact, not source.
+Envex Energy Landing.html
