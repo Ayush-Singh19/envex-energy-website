@@ -1,59 +1,89 @@
 # Envex Energy — Website
 
-Single-page marketing site for Envex Energy (solar EPC), plus five solution detail views.
+Marketing site for Envex Energy (solar EPC). Seven routes plus five solution detail views.
 
 ## Files
 
 | File | What it is |
 | --- | --- |
-| `Envex Energy Landing.dc.html` | **Source.** Edit this one. Needs `support.js` beside it. |
-| `envex-standalone-src.html` | Bundler input — same design with a preview thumbnail added. Generated from the source. |
-| `Envex Energy Landing.html` | **Generated standalone build — not tracked in git.** Opens offline in any browser, no server or assets needed (~15 MB, media inlined). Regenerate from the source via Claude Design when you need a shareable file; do not hand-edit. |
-| `support.js` | Runtime required by the source file. |
-| `media/` | Logos, hero video/stills, About photo, Why-section consultation photo. |
-| `frames/` | Working stills used while designing the hero. Not referenced by the site. |
-| `uploads/` | Raw source material (reference PDF, hero video renders). Not referenced by the site. |
+| `src/index.html` | **Source. Edit this one.** Markup, styles and the `Component` logic class in one file. |
+| `Envex Energy Landing.dc.html` | **Generated — do not hand-edit.** The file the runtime actually boots. Same as the source minus the bundler-thumbnail `<template>`. |
+| `sync-dc.py` | Regenerates the `.dc.html` from `src/index.html`. **Run after every edit.** |
+| `Envex Energy Landing.html` | Generated standalone build, not tracked (~15 MB, media inlined). Regenerate via Claude Design when a shareable offline file is needed. |
+| `support.js` / `image-slot.js` | The Claude Design runtime. Not ours; don't edit. |
+| `media/` | Logos, hero still, section photography. |
+| `frames/`, `uploads/` | Working material. Not referenced by the site. |
+
+The two HTML files drifted silently in the past — one was two commits behind the other while both looked current. `sync-dc.py` exists so that cannot happen again:
+
+    python sync-dc.py
 
 ## Viewing
 
-- To work on it: serve the repo root over http and open `Envex Energy Landing.dc.html` (keep `support.js`, `image-slot.js` and `media/` alongside). It needs http rather than file://, and a network connection — the runtime pulls React from a CDN.
+Serve the repo root over http and open the `.dc.html` (not `src/index.html` — its relative `media/` paths resolve to `src/media/`, which does not exist):
 
-      python -m http.server 8080
-      # http://127.0.0.1:8080/Envex%20Energy%20Landing.dc.html
+    python -m http.server 8080
+    # http://127.0.0.1:8080/Envex%20Energy%20Landing.dc.html
 
-- To share an offline copy: regenerate `Envex Energy Landing.html` from the source via Claude Design. It is a build artifact and is no longer tracked, so a fresh clone will not have it — and any stale copy on disk can silently lag the source.
+Needs http rather than `file://`, and a network connection — React and the fonts come from CDNs.
 
-## Page structure
+## Architecture
 
-Hero → About us (Vision / Mission / Core values) → Why Choose Us → Our Process → Our Solutions → Services → Contact → Footer.
+No router library, no build step, no component framework. One `<x-dc>` template plus one `class Component extends DCLogic`. The runtime (`support.js`) provides `sc-if`, `sc-for` and `{{ }}` interpolation, and renders through React 18 from unpkg.
 
-**About us** is an editorial composition: oversized headline ("SOLAR" set in the logo green) paired with narrower support copy, the installation photo at native 3:2 with its caption outside the frame, then Vision / Mission / Core Values as three typographic columns — no cards, no dividers. Core Values pairs 01–04 into a two-column grid above 1000px with "Customer first" full-width, so the column balances Vision and Mission instead of running tall.
+### Routing
 
-**Why Choose Us** is a two-column editorial split: eyebrow + headline + consultation photo (with the Survey → Design → Install → Support process line overlaid) on the left; intro, "One team. One point of contact.", and the three differentiators on the right. The 01/02/03 rows run a blue → amber → green accent progression — color appears only on the numeral, icon, accent rule and hover tint.
+Routes are **hash-based** (`#/about`). Paths like `/about` would need a server able to rewrite them onto this file, and there isn't one — this is a static `.dc.html` opened directly.
 
-**Our Solutions** is a deep-navy band; the five categories are rows in one translucent card, each with a line icon, capacity band and green hover bar.
+| Route | Sections |
+| --- | --- |
+| `#/` | Hero, intro, solutions overview, six-stage process, CTA |
+| `#/about` | About, Vision / Mission / Core values |
+| `#/solutions` | The five categories |
+| `#/solutions/<id>` | A category's detail view (`rooftop`, `ongrid`, `hybrid`, `ci`, `custom`) |
+| `#/services` | Services hero, how we work, core services, journey, approach, what we handle, who we serve, FAQ |
+| `#/why` | Why choose us, our process |
+| `#/b2b` | Channel partners, four engagement types, how one starts |
+| `#/contact` | Contact, quick contact, enquiry form, company information, CTA |
 
-**Our Solutions** has five cards — Rooftop Solar, On-Grid Systems, Hybrid Solar, Commercial & Industrial, Customized Solutions. Each "Explore →" opens a full detail view built from one shared template with five data sets:
+`Component.parseHash()` is the only place a URL is read; `_onHash` is the only place route state is written. A click, a Back press and a cold load with a deep link therefore all follow one path. The nav and footer sit outside the route blocks and render on every page.
 
-Hero band → Overview → What's included (spec table) → How it works → What's inside every system (accordion of the 20 shared core components) → Cross-links to the other four → Talk-to-us CTA.
+Solution detail views are routes, not overlay state — so Back closes one, and a link to `#/solutions/hybrid` opens it directly.
 
-Detail content is driven by `Component.DETAIL` and `Component.CORE` in the logic class — add or edit a category there, not in the markup.
+To add a route: add it to `MENU` and `ROUTES`, wrap the sections in `<sc-if value="{{ isX }}">`, and return `isX` from `renderVals()`.
 
-### Pricing
+### Cross-route links
 
-Deliberately **no ₹ figures anywhere.** The reference PDF is a GeM tendering classification whose own note says its ranges are indicative and must be verified against a real quotation. Pages show component type and capacity range only, with "as per system requirement" language, and drive to a quote. Publishing indicative pricing is a separate decision to confirm with the client first.
+Use `this._goRoute('#/contact')`, or `this._goRoute('#/contact', 'enquiry')` to land on a specific block. Never write a bare `#element-id` into the URL — that replaces the route hash and the page falls back to Home on refresh.
+
+### Content
+
+All copy lives as static arrays on the logic class — `MENU`, `PILLARS`, `SOLUTIONS`, `DETAIL`, `CORE`, `HANDLE`, `SEGMENTS`, `B2B`, `FAQ`, `JOURNEY`, `REGISTRY`. Edit content there, not in the markup.
+
+### Layout
+
+Sections flow to their content. Only `#top` has a viewport-height floor. An earlier rule put `min-height: 100svh; align-content: center` on *every* desktop section, which was reasonable when the site was one continuous scroll but left ~350 px of symmetric dead space per section once each nav item became its own route. Rhythm comes from padding, not from a floor.
+
+The page wrapper `<div>` must contain every section and the footer. A stray `</div>` once closed it two-thirds down the file, dropping `overflow-x: hidden`, `line-height` and the background from everything below.
+
+## Constraints
+
+- **No ₹ figures anywhere.** The reference PDF is a GeM tendering classification whose own note says its ranges are indicative and must be verified against a real quotation. Pages give component type and capacity range only.
+- **No fabricated credibility.** No installation counts, MW figures, customer numbers, years in business, certifications, awards or client logos — the company has none to claim yet. Qualitative description only.
+- Approval and liaisoning coverage is stated as Uttarakhand, which is verified. Do not broaden it.
+- Brand assets, contact details and the footer copyright line are placeholders pending client-supplied material.
 
 ## Design notes
 
-- Palette: navy `#0b1f33` / `#05264a`, solar blue `#1769aa`, green `#5fae3b` (logo family; `#4f7a00` where small text needs contrast), amber `#c88a1e` / `#8a5605`, light surfaces `#f5f8fb` / `#ffffff`.
+- Palette: navy `#0b1f33` / `#05264a`, solar blue `#1769aa` / `#0b4f9c`, green `#5fae3b` / `#8fd14f`, amber `#ffb84d` / `#c88a1e`, light surfaces `#f7fafd` / `#ffffff`.
 - Type: Clash Display / General Sans for headings, Manrope for body. The brand stack is set on `body` in the helmet — anything relying on inheritance falls back to Times New Roman without it.
-- Navy+amber is the Solutions treatment, not the whole site — detail pages use it for the hero band and closing CTA, light theme for everything between.
-- Motion: scroll reveals via IntersectionObserver with a staggered inner rise on cards; nav tints past 40px; anchor scrolling is JS-eased with a 96px offset. The Why image reveals scale(1.04)→1, its process line draws stage by stage, and the trust dot pulses once. All respect `prefers-reduced-motion` except the anchor easing.
-- Hover states that reach from a row into its children (Solutions rows, Why trust rows) live in the `<helmet>` block, since inline styles can't express parent-hover. Note `[data-accent]` is claimed by the About accent bars — the Why rows use `data-trust-accent` to avoid colliding with it.
-- Spec tables are real `<table>` markup with `<th scope>` for screen readers, and collapse to stacked key-value cards under 640px.
+- Motion: scroll reveals via IntersectionObserver; accordions animate `grid-template-rows: 0fr → 1fr` so they expand to real height rather than a guessed `max-height`. All respect `prefers-reduced-motion`.
+- Hover states that reach from a row into its children live in the `<helmet>` block, since inline styles can't express parent-hover.
+- Spec tables are real `<table>` markup with `<th scope>`, collapsing to stacked cards under 640px.
 
-## Outstanding
+## Known gaps
 
-- Brand assets, contact details and the footer copyright line are placeholders pending client-supplied material.
-- No portfolio numbers, client counts or years-in-business anywhere — the company has none yet and doesn't want fabricated claims.
-- If this moves into the Next.js repo, the five detail views become real routes under `/solutions/`; they're in-page views here because this build is a single page.
+- The enquiry form hands off to `mailto:` with no backend, so anyone on webmail drops out of the funnel. The confirmation copy is honest ("Your enquiry has been prepared"), but leads are not captured anywhere.
+- `media/hero-still.jpeg` is 6.2 MB and is the LCP element, set as a CSS background so it cannot take `srcset` or `fetchpriority`. Referenced media totals ~17 MB.
+- No meta description, Open Graph tags, favicon or canonical URL.
+- `media/` holds four hero `.mp4` files (~34 MB) that no `<video>` element references.
