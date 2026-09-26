@@ -9,3 +9,20 @@ raw/
 # "Envex Energy Landing.dc.html" via Claude Design when you need a
 # shareable offline file; it is an artifact, not source.
 Envex Energy Landing.html
+
+# Launch reel output from the /brag skill (~37MB incl. render stills).
+# brag.mp4 and share-copy.txt are deliverables; rebuild instructions are in
+# brag-output/README.md.
+brag-output/
+
+# Pasted screenshots and image drops from working sessions (~61MB).
+# Nothing here is referenced by src/index.html.
+uploads/
+
+# Claude Code plugin install: third-party skill plus its bundled audio,
+# whose licence terms are not documented.
+.agents/
+.claude/
+skills-lock.json
+
+node_modules/
