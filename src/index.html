@@ -972,6 +972,40 @@
      is shared with the Services hero and is left alone */
   [data-chero-sec] [data-svc-hero] { grid-template-columns: minmax(0, 1fr); }
 
+  /* Services hero. The photograph is the section background, so the copy is the only
+     child here too and the grid collapses to one column. The type is held to the left
+     40-45% where the wash is deepest and the photograph is calmest. */
+  [data-svc-hero-sec] [data-svc-hero] { grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 900px) {
+    [data-svc-hero-sec] [data-svc-hero] > div { max-width: min(52%, 600px); }
+  }
+  [data-svc-hero-sec] {
+    background-color: #041c34;
+    background-image: linear-gradient(90deg, rgba(4,25,45,.88) 0%, rgba(4,25,45,.78) 24%, rgba(4,25,45,.54) 42%,
+                                              rgba(4,25,45,.24) 60%, rgba(4,25,45,.06) 80%, rgba(4,25,45,0) 100%),
+                      linear-gradient(180deg, rgba(4,25,45,.46) 0%, rgba(4,25,45,.06) 22%, rgba(4,25,45,0) 52%,
+                                              rgba(4,25,45,.3) 100%),
+                      url('media/envex-services-hero.webp');
+    background-size: auto, auto, cover;
+    background-position: center, center, 72% center;
+    background-repeat: no-repeat;
+  }
+  /* cover scales by width once the section is wider than the photograph, which leaves no
+     horizontal slack for background-position. Below that the crop walks right so the
+     panels and the two engineers stay in frame rather than being cut away. */
+  @media (max-width: 1100px) { [data-svc-hero-sec] { background-position: center, center, 76% center; } }
+  /* stacked, the copy runs the full width, so the wash turns vertical. One layer only -
+     two stacked washes took the photograph close to a flat navy panel. It stays heaviest
+     behind the heading and lifts over the panels at the foot. */
+  @media (max-width: 899px) {
+    [data-svc-hero-sec] { min-height: min(84svh, 720px);
+      background-image: linear-gradient(180deg, rgba(4,25,45,.84) 0%, rgba(4,25,45,.78) 34%, rgba(4,25,45,.62) 62%,
+                                                rgba(4,25,45,.44) 82%, rgba(4,25,45,.56) 100%),
+                        url('media/envex-services-hero.webp');
+      background-size: auto, cover;
+      background-position: center, 84% center; }
+  }
+
   /* Contact hero backdrop framing. The type sits left, so the crop is biased right to
      hold the building and the walkway figures clear of it; as the section narrows the
      crop walks back toward the subject rather than cutting it off. */
@@ -2323,38 +2357,30 @@
   
 
   <sc-if value="{{ isServices }}" hint-placeholder-val="{{ true }}">
-  <section id="services" data-screen-label="Services hero" style="position: relative; overflow: hidden; box-sizing: border-box; scroll-margin-top: 96px; padding: clamp(56px, 6.5vw, 92px) clamp(20px, 6vw, 80px); background: linear-gradient(158deg, #073b68 0%, #05264a 52%, #041c34 100%); color: #ffffff;">
-    <span aria-hidden="true" style="position: absolute; inset: 0; opacity: .055; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,.7) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.7) 1px, transparent 1px); background-size: 96px 96px;"></span>
-    <div style="position: relative; max-width: 1200px; margin: 0 auto;">
+  <section id="services" data-svc-hero-sec="" data-screen-label="Services hero" style="position: relative; overflow: hidden; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; min-height: min(90svh, 840px); scroll-margin-top: 96px; padding: clamp(72px, 8vw, 112px) clamp(20px, 6vw, 80px) clamp(64px, 7vw, 96px); color: #ffffff;">
+    <span aria-hidden="true" style="position: absolute; inset: 0; opacity: .018; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,.7) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.7) 1px, transparent 1px); background-size: 96px 96px;"></span>
+    <div style="position: relative; width: 100%; max-width: 1200px; margin: 0 auto;">
       <div data-svc-hero="" style="display: grid; gap: clamp(28px, 3.6vw, 60px); align-items: center;">
         <div>
-          <p data-reveal="" style="margin: 0 0 15px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 11.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #9ed46a; opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1), transform .75s cubic-bezier(.22,.68,.3,1);">Our services</p>
-          <h1 data-reveal="" style="margin: 0 0 clamp(16px, 1.8vw, 22px); max-width: 15ch; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(32px, 4.2vw, 54px); line-height: 1.04; font-weight: 500; letter-spacing: -.03em; color: #ffffff; text-wrap: balance; opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1) 70ms, transform .75s cubic-bezier(.22,.68,.3,1) 70ms;">From project planning to plant <span style="color: #f5b942;">performance.</span></h1>
-          <p data-reveal="" style="margin: 0 0 clamp(26px, 3vw, 36px); max-width: 52ch; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: clamp(16px, 1.5vw, 17.5px); line-height: 1.62; color: rgba(255,255,255,.8); text-wrap: pretty; opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1) 130ms, transform .75s cubic-bezier(.22,.68,.3,1) 130ms;">From feasibility and system design to project execution, approvals, commissioning and ongoing maintenance, we support the practical work required to move a solar project from requirement to operation.</p>
+          <p data-reveal="" style="margin: 0 0 15px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 11.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #9ed46a; opacity: 0; transform: translateY(26px); transition: opacity .64s cubic-bezier(.22,.68,.3,1), transform .64s cubic-bezier(.22,.68,.3,1);">Our services</p>
+          <h1 data-reveal="" style="margin: 0 0 clamp(16px, 1.8vw, 22px); max-width: 15ch; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(32px, 4.2vw, 54px); line-height: 1.04; font-weight: 500; letter-spacing: -.03em; color: #ffffff; text-wrap: balance; opacity: 0; transform: translateY(26px); transition: opacity .64s cubic-bezier(.22,.68,.3,1) 70ms, transform .64s cubic-bezier(.22,.68,.3,1) 70ms;">From project planning to plant <span style="color: #f5b942;">performance.</span></h1>
+          <p data-reveal="" style="margin: 0 0 clamp(26px, 3vw, 36px); max-width: 52ch; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: clamp(16px, 1.5vw, 17.5px); line-height: 1.62; color: rgba(255,255,255,.8); text-wrap: pretty; opacity: 0; transform: translateY(26px); transition: opacity .64s cubic-bezier(.22,.68,.3,1) 130ms, transform .64s cubic-bezier(.22,.68,.3,1) 130ms;">From feasibility and system design to project execution, approvals, commissioning and ongoing maintenance, we support the practical work required to move a solar project from requirement to operation.</p>
 
-          <ul data-cap-index="" data-reveal="" style="display: grid; gap: 0 clamp(20px, 2.6vw, 40px); margin: 0 0 clamp(26px, 3vw, 36px); padding: 0; list-style: none; opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1) 180ms, transform .75s cubic-bezier(.22,.68,.3,1) 180ms;">
-            <sc-for list="{{ capabilities }}" as="c" hint-placeholder-count="6">
-              <li data-cap-line="" style="display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: baseline; column-gap: 11px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.14);">
+          <ul data-cap-index="" data-reveal="" style="display: grid; gap: 0 clamp(18px, 2.2vw, 34px); margin: 0 0 clamp(24px, 2.8vw, 34px); padding: 0; list-style: none; opacity: 0; transform: translateY(26px); transition: opacity .64s cubic-bezier(.22,.68,.3,1) 180ms, transform .64s cubic-bezier(.22,.68,.3,1) 180ms;">
+            <sc-for list="{{ capIndex }}" as="c" hint-placeholder-count="6">
+              <li data-cap-line="" style="display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: baseline; column-gap: 11px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.18);">
                 <span aria-hidden="true" data-cap-n="" style="font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: .06em; color: #f5b942;">{{ c.n }}</span>
                 <span data-cap-label="" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: rgba(255,255,255,.86);">{{ c.label }}</span>
               </li>
             </sc-for>
           </ul>
 
-          <div data-reveal="" style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1) 240ms, transform .75s cubic-bezier(.22,.68,.3,1) 240ms;">
+          <div data-reveal="" style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; opacity: 0; transform: translateY(26px); transition: opacity .64s cubic-bezier(.22,.68,.3,1) 240ms, transform .64s cubic-bezier(.22,.68,.3,1) 240ms;">
             <button type="button" onClick="{{ goQuote }}" data-connect-btn="" data-primary-cta="" style="padding: 15px 30px; border: 0; border-radius: 8px; background: #f5b942; color: #082b4c; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; font-weight: 600; letter-spacing: -.004em; cursor: pointer;">Discuss your project</button>
             <button type="button" onClick="{{ goServicesCore }}" data-svc-link="" style="padding: 0; border: 0; background: none; cursor: pointer; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 600; color: rgba(255,255,255,.84); text-decoration: underline; text-underline-offset: 5px;">Explore our services</button>
           </div>
         </div>
 
-        <figure data-svc-photo="" data-reveal="" style="position: relative; margin: 0; aspect-ratio: 4 / 3.4; border-radius: 12px; overflow: hidden; background: #0a3055; opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1) 120ms, transform .75s cubic-bezier(.22,.68,.3,1) 120ms;">
-          <span data-svc-img="" role="img" aria-label="An Envex Energy technician fitting rooftop solar modules above a valley" style="position: absolute; inset: 0; display: block; background: url('media/rooftop-install-technician.png') 52% 52% / cover no-repeat;"></span>
-          <span aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(105deg, rgba(4,28,52,.5) 0%, rgba(4,28,52,.12) 24%, rgba(4,28,52,0) 48%), linear-gradient(to top, rgba(4,28,52,.68) 0%, rgba(4,28,52,0) 40%);"></span>
-          <figcaption style="position: absolute; inset: auto 0 0 0; padding: clamp(16px, 2vw, 24px);">
-            <p style="margin: 0 0 5px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #9ed46a;">Project delivery</p>
-            <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.9);">EPC · Engineering · O&amp;M</p>
-          </figcaption>
-        </figure>
       </div>
 
     </div>
@@ -4629,7 +4655,7 @@ class Component extends DCLogic {
       coreToggleIcon: this.state.coreOpen ? '–' : '+',
       corePanelStyle: 'overflow: hidden; transition: max-height .5s cubic-bezier(.22,1,.36,1), opacity .38s ease; max-height: ' + (this.state.coreOpen ? '760px' : '0px') + '; opacity: ' + (this.state.coreOpen ? '1' : '0') + ';',
       toggleCore: () => this.setState(s => ({ coreOpen: !s.coreOpen })),
-      capabilities: Component.CAPABILITIES.map((c, i) => ({ n: String(i + 1).padStart(2, '0'), label: c })),
+      capIndex: Component.CAPABILITIES.map((c, i) => ({ n: String(i + 1).padStart(2, '0'), label: c })),
       pillars: Component.PILLARS.map((p, pi) => {
         // navy, off-white, deep navy - the alternation is what gives the page its rhythm
         const dark = pi !== 1;
