@@ -1,89 +1,142 @@
 # Envex Energy — Website
 
-Marketing site for Envex Energy (solar EPC). Seven routes plus five solution detail views.
+Marketing site for Envex Energy, a solar EPC company. Seven routes plus five
+solution detail views.
 
-## Files
+## Technology
 
-| File | What it is |
+There is no framework, no package manager and no build step. The site is a
+single HTML document interpreted at runtime by the Claude Design runtime.
+
+| Layer | What it is |
 | --- | --- |
-| `src/index.html` | **Source. Edit this one.** Markup, styles and the `Component` logic class in one file. |
-| `Envex Energy Landing.dc.html` | **Generated — do not hand-edit.** The file the runtime actually boots. Same as the source minus the bundler-thumbnail `<template>`. |
-| `sync-dc.py` | Regenerates the `.dc.html` from `src/index.html`. **Run after every edit.** |
-| `Envex Energy Landing.html` | Generated standalone build, not tracked (~15 MB, media inlined). Regenerate via Claude Design when a shareable offline file is needed. |
-| `support.js` / `image-slot.js` | The Claude Design runtime. Not ours; don't edit. |
-| `media/` | Logos, hero still, section photography. |
-| `frames/`, `uploads/` | Working material. Not referenced by the site. |
+| Runtime | `support.js` — the Claude Design template engine (`sc-for`, `sc-if`, `{{ }}` interpolation). Third-party; do not edit. |
+| View layer | React 18, loaded from a CDN by `support.js`. No local install. |
+| Markup, styles, logic | All three live in `src/index.html`. Styles are in a `<helmet><style>` block; behaviour is one `class Component extends DCLogic`. |
+| Routing | Hash-based, implemented in that class. `#/about`, `#/solutions/hybrid`. |
+| Images | `image-slot.js` — the Claude Design image-slot element. Third-party; do not edit. |
 
-The two HTML files drifted silently in the past — one was two commits behind the other while both looked current. `sync-dc.py` exists so that cannot happen again:
+Path routing is not possible here: the site boots as a static `.dc.html` opened
+over plain HTTP, so there is no server able to rewrite `/about` back onto the
+file. That is why every route is a hash.
 
-    python sync-dc.py
+## Project structure
 
-## Viewing
+```
+src/index.html                  Source of truth. Edit only this.
+src/support.js                  Runtime copy, so src/ can be served directly.
+src/image-slot.js               Image-slot copy, same reason.
 
-Serve the repo root over http and open the `.dc.html` (not `src/index.html` — its relative `media/` paths resolve to `src/media/`, which does not exist):
+Envex Energy Landing.dc.html    Generated. The file the runtime boots.
+support.js  image-slot.js       Runtime, loaded by the generated file.
+media/                          Production images. Everything here is referenced.
 
-    python -m http.server 8080
-    # http://127.0.0.1:8080/Envex%20Energy%20Landing.dc.html
+sync-dc.py                      Regenerates the generated file from the source.
+docs/                           Project documentation.
+```
 
-Needs http rather than `file://`, and a network connection — React and the fonts come from CDNs.
+Directories kept for history and **not referenced by the site**: `design/`
+(an earlier snapshot of the generated file, together with the `public/media/`
+copies it points at), `frames/` (video frame grabs), `uploads/` (working
+material), `envex-standalone-src.html` and `.image-slots.state.json`.
 
-## Architecture
+### The two HTML files
 
-No router library, no build step, no component framework. One `<x-dc>` template plus one `class Component extends DCLogic`. The runtime (`support.js`) provides `sc-if`, `sc-for` and `{{ }}` interpolation, and renders through React 18 from unpkg.
+`src/index.html` is the source. `Envex Energy Landing.dc.html` is generated
+from it and is what actually boots — identical to the source minus the
+bundler-thumbnail `<template>`.
 
-### Routing
+They drifted silently once before, one two commits behind the other while both
+looked current. `sync-dc.py` exists so that cannot happen again.
 
-Routes are **hash-based** (`#/about`). Paths like `/about` would need a server able to rewrite them onto this file, and there isn't one — this is a static `.dc.html` opened directly.
+## Local development
 
-| Route | Sections |
-| --- | --- |
-| `#/` | Hero, intro, solutions overview, six-stage process, CTA |
-| `#/about` | About, Vision / Mission / Core values |
-| `#/solutions` | The five categories |
-| `#/solutions/<id>` | A category's detail view (`rooftop`, `ongrid`, `hybrid`, `ci`, `custom`) |
-| `#/services` | Services hero, how we work, core services, journey, approach, what we handle, who we serve, FAQ |
-| `#/why` | Why choose us, our process |
-| `#/b2b` | Channel partners, four engagement types, how one starts |
-| `#/contact` | Contact, quick contact, enquiry form, company information, CTA |
+No install step. Serve the repository root over HTTP — opening the file
+directly with `file://` will not work, because the runtime fetches
+`./support.js`.
 
-`Component.parseHash()` is the only place a URL is read; `_onHash` is the only place route state is written. A click, a Back press and a cold load with a deep link therefore all follow one path. The nav and footer sit outside the route blocks and render on every page.
+```
+python -m http.server 8080 --bind 127.0.0.1
+```
 
-Solution detail views are routes, not overlay state — so Back closes one, and a link to `#/solutions/hybrid` opens it directly.
+Then open:
 
-To add a route: add it to `MENU` and `ROUTES`, wrap the sections in `<sc-if value="{{ isX }}">`, and return `isX` from `renderVals()`.
+```
+http://127.0.0.1:8080/Envex%20Energy%20Landing.dc.html
+```
 
-### Cross-route links
+Edit `src/index.html`, then **run the sync after every edit**:
 
-Use `this._goRoute('#/contact')`, or `this._goRoute('#/contact', 'enquiry')` to land on a specific block. Never write a bare `#element-id` into the URL — that replaces the route hash and the page falls back to Home on refresh.
+```
+python sync-dc.py
+```
 
-### Content
+Serving `src/index.html` directly also works, which is why `src/` carries its
+own copies of the two runtime scripts.
 
-All copy lives as static arrays on the logic class — `MENU`, `PILLARS`, `SOLUTIONS`, `DETAIL`, `CORE`, `HANDLE`, `SEGMENTS`, `B2B`, `FAQ`, `JOURNEY`, `REGISTRY`. Edit content there, not in the markup.
+## Production build
 
-### Layout
+There is no build. `Envex Energy Landing.dc.html` is the deliverable; keeping
+it in sync with the source is the whole build process.
 
-Sections flow to their content. Only `#top` has a viewport-height floor. An earlier rule put `min-height: 100svh; align-content: center` on *every* desktop section, which was reasonable when the site was one continuous scroll but left ~350 px of symmetric dead space per section once each nav item became its own route. Rhythm comes from padding, not from a floor.
+A standalone single-file export (`Envex Energy Landing.html`, roughly 15 MB
+with media inlined) can be regenerated through Claude Design when a shareable
+offline copy is needed. It is an artifact, not source, and is not tracked.
 
-The page wrapper `<div>` must contain every section and the footer. A stray `</div>` once closed it two-thirds down the file, dropping `overflow-x: hidden`, `line-height` and the background from everything below.
+## Environment variables
 
-## Constraints
+None. The site holds no keys, no tokens and no backend configuration.
 
-- **No ₹ figures anywhere.** The reference PDF is a GeM tendering classification whose own note says its ranges are indicative and must be verified against a real quotation. Pages give component type and capacity range only.
-- **No fabricated credibility.** No installation counts, MW figures, customer numbers, years in business, certifications, awards or client logos — the company has none to claim yet. Qualitative description only.
-- Approval and liaisoning coverage is stated as Uttarakhand, which is verified. Do not broaden it.
-- Brand assets, contact details and the footer copyright line are placeholders pending client-supplied material.
+The enquiry forms compose a `mailto:` message rather than posting anywhere, so
+there is no endpoint to configure. Both submit handlers are written so a single
+line can be swapped for a real `POST` when an endpoint exists:
+`_submitEnquiry` and `_bSubmit` in `src/index.html`.
 
-## Design notes
+## Asset guidelines
 
-- Palette: navy `#0b1f33` / `#05264a`, solar blue `#1769aa` / `#0b4f9c`, green `#5fae3b` / `#8fd14f`, amber `#ffb84d` / `#c88a1e`, light surfaces `#f7fafd` / `#ffffff`.
-- Type: Clash Display / General Sans for headings, Manrope for body. The brand stack is set on `body` in the helmet — anything relying on inheritance falls back to Times New Roman without it.
-- Motion: scroll reveals via IntersectionObserver; accordions animate `grid-template-rows: 0fr → 1fr` so they expand to real height rather than a guessed `max-height`. All respect `prefers-reduced-motion`.
-- Hover states that reach from a row into its children live in the `<helmet>` block, since inline styles can't express parent-hover.
-- Spec tables are real `<table>` markup with `<th scope>`, collapsing to stacked cards under 640px.
+Everything in `media/` is referenced by the site. Anything not referenced
+belongs in `uploads/`, not here.
+
+- lowercase, kebab-case, no spaces, no dates, no generator filenames
+- named for what the image shows or where it is used, not for where it came
+  from — `rooftop-consultation.jpeg`, not `why-consultation.jpeg`
+- prefer WebP for photographs added from now on; existing JPEG and PNG assets
+  are left as they are rather than re-encoded
+- when renaming, update every reference in `src/index.html` and re-run
+  `sync-dc.py`
+
+## Content rules
+
+The site states only what can be verified from company records. It carries no
+project counts, installed capacity, customer numbers, years of experience,
+certifications, awards, testimonials, performance percentages or coverage
+claims. Please keep it that way — an honest page is worth more here than an
+impressive one.
+
+Registered company identifiers live in the `REGISTRY` constant in
+`src/index.html`. CIN and GSTIN appear in the footer legal row.
+
+## Git workflow
+
+`main` is the trunk. Work happens on short-lived branches merged by pull
+request:
+
+- `feature/<name>` for site changes
+- `chore/<name>` for repository and tooling work
+
+Every commit that touches `src/index.html` must include the regenerated
+`Envex Energy Landing.dc.html` produced by `sync-dc.py`. A commit with one but
+not the other is the drift this repository has already seen once.
+
+## Deployment
+
+Not yet documented. The site is a static directory: the generated HTML,
+`support.js`, `image-slot.js` and `media/` served from one root over HTTP.
+Any static host will do. Update this section once the target is chosen.
 
 ## Known gaps
 
-- The enquiry form hands off to `mailto:` with no backend, so anyone on webmail drops out of the funnel. The confirmation copy is honest ("Your enquiry has been prepared"), but leads are not captured anywhere.
-- `media/hero-still.jpeg` is 6.2 MB and is the LCP element, set as a CSS background so it cannot take `srcset` or `fetchpriority`. Referenced media totals ~17 MB.
-- No meta description, Open Graph tags, favicon or canonical URL.
-- `media/` holds four hero `.mp4` files (~34 MB) that no `<video>` element references.
+- The enquiry forms have no backend; they open the visitor's mail client.
+- `media/hero-still.jpeg` is 6.2 MB and is the largest thing on the home
+  page's critical path.
+- No meta description, Open Graph tags or favicon.

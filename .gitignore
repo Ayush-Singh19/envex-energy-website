@@ -26,3 +26,16 @@ uploads/
 skills-lock.json
 
 node_modules/
+
+# Environment and secrets - none are used today; ignored so none appear later.
+.env
+.env.*
+!.env.example
+
+# Logs and coverage
+*.log
+npm-debug.log*
+coverage/
+
+# Editor state written by the Claude Design image-slot tooling
+.image-slots.state.json

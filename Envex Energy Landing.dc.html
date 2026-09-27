@@ -1778,7 +1778,7 @@
 
         <figure data-rise="2" data-about-frame="" style="margin: 0; display: flex; flex-direction: column; gap: clamp(14px, 1.6vw, 20px); transition-delay: .1s;">
           <span style="position: relative; overflow: hidden; display: block; border-radius: 12px; background: #e9eff5; aspect-ratio: 4 / 3; box-shadow: 0 30px 60px -42px rgba(8,36,70,.46); border: 1px solid #e2eaf2;">
-            <img data-about-img="" data-img-reveal="" src="media/about-installer.png" alt="An Envex Energy technician fitting rooftop solar panels on a home overlooking a valley" loading="lazy" decoding="async" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 42% 50%;">
+            <img data-about-img="" data-img-reveal="" src="media/rooftop-install-technician.png" alt="An Envex Energy technician fitting rooftop solar panels on a home overlooking a valley" loading="lazy" decoding="async" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 42% 50%;">
           </span>
           <figcaption style="display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; column-gap: 16px;">
             <span style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #4f7a00;">End to end</span>
@@ -2253,7 +2253,7 @@
         </div>
 
         <figure data-svc-photo="" data-reveal="" style="position: relative; margin: 0; aspect-ratio: 4 / 3.4; border-radius: 12px; overflow: hidden; background: #0a3055; opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1) 120ms, transform .75s cubic-bezier(.22,.68,.3,1) 120ms;">
-          <span data-svc-img="" role="img" aria-label="An Envex Energy technician fitting rooftop solar modules above a valley" style="position: absolute; inset: 0; display: block; background: url('media/about-installer.png') 52% 52% / cover no-repeat;"></span>
+          <span data-svc-img="" role="img" aria-label="An Envex Energy technician fitting rooftop solar modules above a valley" style="position: absolute; inset: 0; display: block; background: url('media/rooftop-install-technician.png') 52% 52% / cover no-repeat;"></span>
           <span aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(105deg, rgba(4,28,52,.5) 0%, rgba(4,28,52,.12) 24%, rgba(4,28,52,0) 48%), linear-gradient(to top, rgba(4,28,52,.68) 0%, rgba(4,28,52,0) 40%);"></span>
           <figcaption style="position: absolute; inset: auto 0 0 0; padding: clamp(16px, 2vw, 24px);">
             <p style="margin: 0 0 5px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #9ed46a;">Project delivery</p>
@@ -3795,7 +3795,7 @@ class Component extends DCLogic {
   static STAGES = [
     ['Understand', 'Site assessment',
      'Every project starts with the site. We look at the available space, the energy requirement and the installation conditions before any design work begins.',
-     'media/why-consultation.jpeg',
+     'media/rooftop-consultation.jpeg',
      'An Envex Energy consultant reviewing system output on a tablet with a homeowner beside a rooftop array',
      'Assessing roof area, shading and the electrical supply on site.'],
     ['Design', 'System design',
@@ -3805,7 +3805,7 @@ class Component extends DCLogic {
      'System capacity, layout and equipment worked out against the site.'],
     ['Execute', 'Project execution',
      'Once the design is settled we coordinate approvals, procurement, installation and commissioning through to handover.',
-     'media/about-installer.png',
+     'media/rooftop-install-technician.png',
      'An Envex Energy technician fitting rooftop solar panels on a home overlooking a valley',
      'Structure, modules and electrical integration on site.'],
     ['Maintain', 'Monitoring & service',
@@ -3912,7 +3912,7 @@ class Component extends DCLogic {
     'sol-ongrid': ['media/solutions-ongrid.jpeg', 'A grid-connected home at dusk, rooftop array feeding the inverter and export line to the street supply'],
     'sol-hybrid': ['media/solutions-hybrid-diagram.png', 'Diagram of a hybrid system: rooftop panels feed DC to a hybrid inverter, battery storage sits below it, and AC runs to the home loads and the utility grid', 'contain', '3 / 2'],
     'sol-ci': ['media/envex-solar-hero.webp', 'Two Envex engineers commissioning a rooftop array on an industrial building, with DC combiner boxes and cable trays'],
-    'sol-custom': ['media/why-consultation.jpeg', 'An Envex consultant reviewing system output on a tablet with a homeowner']
+    'sol-custom': ['media/rooftop-consultation.jpeg', 'An Envex consultant reviewing system output on a tablet with a homeowner']
   };
 
   static DETAIL = {
@@ -4437,7 +4437,7 @@ class Component extends DCLogic {
                         'A residential rooftop carrying solar arrays across two roof planes'],
         'sol-ci':      ['media/envex-solar-hero.webp', '62% 50%',
                         'Engineers commissioning a rooftop array on an industrial building, with cable trays running between the rows'],
-        'sol-custom':  ['media/about-installer.png', '70% 48%',
+        'sol-custom':  ['media/rooftop-install-technician.png', '70% 48%',
                         'An installer working on a rooftop panel row above a valley']
       };
       const DSPEC = { 'sol-rooftop': ['Capacity', '1 kW \u2013 500 kW'], 'sol-ongrid': ['Sizing', 'As per sanctioned load'], 'sol-hybrid': ['Storage', '1 kWh \u2013 100 kWh'], 'sol-ci': ['Capacity', '100 kW \u2013 Multi-MW'], 'sol-custom': ['Scope', 'Engineered per site'] };
