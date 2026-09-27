@@ -550,11 +550,10 @@
 
   /* capability selector */
   [data-b-fit] { display: grid; gap: clamp(24px, 3vw, 56px); align-items: start; }
-  @media (min-width: 900px) { [data-b-fit] { grid-template-columns: minmax(0, 34fr) minmax(0, 66fr); column-gap: clamp(56px, 5vw, 88px); } }
+  @media (min-width: 900px) { [data-b-fit] { grid-template-columns: minmax(0, 32fr) minmax(0, 68fr); column-gap: clamp(48px, 4.2vw, 72px); } }
   [data-b-fitnav] { display: grid; gap: 0; }
-  @media (min-width: 900px) { [data-b-fitnav] { position: sticky; top: 104px; } }
   [data-b-fittab] { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline;
-    column-gap: 14px; width: 100%; padding: clamp(15px, 1.6vw, 20px) 0; border: 0; border-top: 1px solid #dfe4dd;
+    column-gap: 14px; width: 100%; min-height: 58px; padding: 17px 0; border: 0; border-top: 1px solid #dfe4dd;
     background: none; text-align: left; cursor: pointer; font: inherit; }
   [data-b-fittab]:last-child { border-bottom: 1px solid #dfe4dd; }
   [data-b-fittab-n] { font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px; font-weight: 700;
@@ -574,8 +573,8 @@
     transition: opacity .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1), visibility .5s; }
   [data-b-fitpanel][data-on="true"] { opacity: 1; visibility: visible; transform: none; }
   [data-b-fit-t] { margin: 0; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif;
-    font-size: clamp(24px, 2.6vw, 36px); line-height: 1.08; font-weight: 600; letter-spacing: -.028em; color: #082846; }
-  [data-b-fit-b] { margin: 22px 0 0; max-width: 52ch; font-family: Manrope, Helvetica, Arial, sans-serif;
+    font-size: clamp(23px, 2.35vw, 32px); line-height: 1.08; font-weight: 600; letter-spacing: -.028em; color: #082846; }
+  [data-b-fit-b] { margin: 16px 0 0; max-width: 56ch; font-family: Manrope, Helvetica, Arial, sans-serif;
     font-size: clamp(16px, 1.45vw, 19px); line-height: 1.56; color: #55687d; text-wrap: pretty; }
   [data-b-fit-cols] { display: grid; gap: clamp(22px, 2.4vw, 40px); margin: 0; grid-template-columns: minmax(0, 1fr); }
   @media (min-width: 620px) { [data-b-fit-cols] { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); } }
@@ -584,7 +583,7 @@
   [data-b-fit-list] { margin: 0; padding: 0; list-style: none; }
   [data-b-fit-list] li { padding: 6px 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px;
     line-height: 1.45; color: #082846; }
-  [data-b-fit-cta] { display: inline-flex; align-items: center; gap: 9px; margin-top: clamp(26px, 2.8vw, 36px);
+  [data-b-fit-cta] { display: inline-flex; align-items: center; gap: 9px; margin-top: clamp(20px, 2.2vw, 28px);
     font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; font-weight: 700; color: #4F7D27;
     text-decoration: none; transition: color .28s ease; }
   [data-b-fit-cta]:hover { color: #3d6420; }
@@ -609,22 +608,47 @@
   [data-b-route-step]:last-child [data-b-route-node] { background: #F5B84B; }
   [data-b-route-link] { width: clamp(16px, 2vw, 34px); height: 1px; margin: 0 12px; background: #cfdbe1; flex: 0 0 auto; }
 
-  [data-b-fit-intro] { margin: 28px 0 0; max-width: 62ch; font-family: Manrope, Helvetica, Arial, sans-serif;
-    font-size: clamp(15.5px, 1.35vw, 17.5px); line-height: 1.62; color: #55687d; text-wrap: pretty; }
+  #b2b-fit [data-b-h2] { font-size: clamp(29px, 3.5vw, 52px); line-height: 1.02; max-width: 15ch; }
+  #b2b-fit [data-b-head] { margin-bottom: clamp(28px, 2.8vw, 40px); }
+  [data-b-fit-intro] { margin: 24px 0 0; max-width: 58ch; font-family: Manrope, Helvetica, Arial, sans-serif;
+    font-size: clamp(15.5px, 1.3vw, 17.5px); line-height: 1.52; color: #55687d; text-wrap: pretty; }
+
+  /* the map sits on its own faint surface; the grid gives technical depth without
+     becoming decoration */
+  [data-b-map] { position: relative; overflow: hidden; margin-top: clamp(22px, 2.2vw, 28px);
+    padding: clamp(16px, 1.8vw, 22px) clamp(16px, 1.8vw, 24px) clamp(18px, 2vw, 24px);
+    border: 1px solid #e3e7e0; border-radius: 10px; background: #fbfbf9; }
+  [data-b-map-grid] { position: absolute; inset: 0; pointer-events: none; opacity: .5;
+    background-image: linear-gradient(rgba(8,40,70,.055) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(8,40,70,.055) 1px, transparent 1px);
+    background-size: 44px 44px; }
+  [data-b-map] > :not([data-b-map-grid]) { position: relative; }
+
+  /* one row of facts instead of three stacked groups */
+  [data-b-meta-row] { display: grid; gap: 18px 0; margin-top: clamp(20px, 2.2vw, 26px);
+    padding-top: clamp(16px, 1.8vw, 22px); border-top: 1px solid #e3e7e0;
+    grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (min-width: 760px) { [data-b-meta-row] { grid-template-columns: 1.3fr .85fr .85fr 1fr; } }
+  @media (min-width: 760px) { [data-b-meta-row] > * + * { padding-left: clamp(14px, 1.4vw, 22px); border-left: 1px solid #e8ebe5; } }
+  [data-b-meta-list] { margin: 9px 0 0; padding: 0; list-style: none; }
+  [data-b-meta-list] li { font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13.5px;
+    line-height: 1.5; color: #55687d; }
+  [data-b-meta-v] { margin: 9px 0 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px;
+    font-weight: 600; letter-spacing: -.004em; color: #082846; }
 
   /* Schematic: rows of stages on hairline rails. A row with more than one node is
      a real branch in the work, so the rail forks rather than running straight. */
   [data-b-schema] { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr));
-    column-gap: 4px; row-gap: 0; margin-top: 14px; max-width: 430px; }
+    column-gap: 4px; row-gap: 0; margin: 10px auto 0; max-width: 400px; }
   [data-b-schema-node] { position: relative; display: flex; flex-direction: column; align-items: center;
-    padding: 16px 2px 0; text-align: center; }
-  [data-b-schema-rail] { position: absolute; top: 0; left: 50%; width: 1px; height: 16px;
+    padding: 12px 2px 0; text-align: center; }
+  [data-b-schema-rail] { position: absolute; top: 0; left: 50%; width: 1px; height: 12px;
     background: #c3d2da; transform: scaleY(var(--rail, 1)); transform-origin: top; }
   [data-b-schema-node][data-fork="true"]::after { content: ""; position: absolute; top: 0; left: 50%;
     width: var(--fork-w, 0); height: 1px; background: #c3d2da; }
   [data-b-schema-dot] { width: 6px; height: 6px; border-radius: 50%; background: #8CC63F; flex: 0 0 auto; }
   [data-b-schema-node]:last-child [data-b-schema-dot] { background: #F5B84B; }
-  [data-b-schema-t] { margin-top: 9px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px;
+  [data-b-schema-t] { margin-top: 6px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px;
     font-weight: 700; letter-spacing: .14em; text-transform: uppercase; line-height: 1.34; color: #082846; }
   @media (max-width: 519px) {
     [data-b-schema] { column-gap: 4px; }
@@ -2579,12 +2603,12 @@
     </div>
   </section>
 
-  <section id="b2b-fit" data-screen-label="Where Envex fits" style="box-sizing: border-box; scroll-margin-top: 96px; padding: clamp(60px, 7vw, 108px) clamp(20px, 6vw, 80px); background: #F5F6F2;">
+  <section id="b2b-fit" data-screen-label="Where Envex fits" style="box-sizing: border-box; scroll-margin-top: 96px; padding: clamp(48px, 5vw, 72px) clamp(20px, 6vw, 80px) clamp(44px, 4.6vw, 64px); background: #F5F6F2;">
     <div style="max-width: 1240px; margin: 0 auto;">
       <div data-b-head="" data-reveal="" style="opacity: 0; transform: translateY(20px); transition: opacity .72s cubic-bezier(.22,1,.36,1), transform .72s cubic-bezier(.22,1,.36,1);">
         <p data-b-eyebrow="">Where Envex fits in</p>
         <h2 data-b-h2="">Four ways a project comes to us.</h2>
-        <p data-b-fit-intro="">Which route a project takes depends on what it needs from us &#8212; supply, execution capacity, engineering, or the documentation to get through approvals.</p>
+        <p data-b-fit-intro="">Projects arrive by different routes. Which one applies depends on whether the requirement is supply, execution capacity, engineering or approvals.</p>
       </div>
 
       <div data-b-fit="" data-reveal="" style="opacity: 0; transform: translateY(20px); transition: opacity .72s cubic-bezier(.22,1,.36,1) 90ms, transform .72s cubic-bezier(.22,1,.36,1) 90ms;">
@@ -2605,31 +2629,9 @@
               <h3 data-b-fit-t="">{{ c.title }}</h3>
               <p data-b-fit-b="">{{ c.body }}</p>
 
-              <span data-b-fit-rule="" aria-hidden="true"></span>
-
-              <div data-b-fit-cols="">
-                <div>
-                  <p data-b-fit-l="">What Envex supports</p>
-                  <ul data-b-fit-list="">
-                    <sc-for list="{{ c.engagement }}" as="e" hint-placeholder-count="4">
-                      <li><span data-b-dot="" aria-hidden="true"></span>{{ e.text }}</li>
-                    </sc-for>
-                  </ul>
-                </div>
-                <div>
-                  <p data-b-fit-l="">Typical partners</p>
-                  <ul data-b-fit-meta="">
-                    <sc-for list="{{ c.audience }}" as="au" hint-placeholder-count="3">
-                      <li>{{ au.text }}<sc-if value="{{ au.notLast }}" hint-placeholder-val="{{ true }}"><span data-b-meta-sep="" aria-hidden="true">&#183;</span></sc-if></li>
-                    </sc-for>
-                  </ul>
-                </div>
-              </div>
-
-              <span data-b-fit-rule="" aria-hidden="true"></span>
-
-              <div data-b-route="">
-                <p data-b-fit-l="">Project route</p>
+              <div data-b-map="">
+                <span data-b-map-grid="" aria-hidden="true"></span>
+                <p data-b-fit-l="">Project flow</p>
                 <div data-b-schema="">
                   <sc-for list="{{ c.schematic }}" as="n" hint-placeholder-count="5">
                     <span data-b-schema-node="" data-branch="{{ n.branch }}" data-fork="{{ n.fork }}" style="{{ n.style }}">
@@ -2641,14 +2643,30 @@
                 </div>
               </div>
 
-              <div data-b-profile="">
+              <div data-b-meta-row="">
+                <div>
+                  <p data-b-fit-l="">What we support</p>
+                  <ul data-b-meta-list="">
+                    <sc-for list="{{ c.engagement }}" as="e" hint-placeholder-count="3">
+                      <li>{{ e.text }}</li>
+                    </sc-for>
+                  </ul>
+                </div>
                 <div>
                   <p data-b-fit-l="">Project entry</p>
-                  <p data-b-profile-v="">{{ c.entry }}</p>
+                  <p data-b-meta-v="">{{ c.entry }}</p>
                 </div>
                 <div>
                   <p data-b-fit-l="">Envex role</p>
-                  <p data-b-profile-v="">{{ c.role }}</p>
+                  <p data-b-meta-v="">{{ c.role }}</p>
+                </div>
+                <div>
+                  <p data-b-fit-l="">Typical partners</p>
+                  <ul data-b-meta-list="">
+                    <sc-for list="{{ c.audience }}" as="au" hint-placeholder-count="2">
+                      <li>{{ au.text }}</li>
+                    </sc-for>
+                  </ul>
                 </div>
               </div>
 
@@ -4752,20 +4770,22 @@ class Component extends DCLogic {
         // carries its own grid placement and whether a rail runs up from it
         schematic: (() => {
           const rows = Component.B2B_SCHEMATIC[c[0]] || [];
+          const cols = rows.length;
           const out = [];
           rows.forEach((row, r) => {
-            const span = 12 / row.length;
             row.forEach((label, k) => {
               out.push({
                 text: label,
                 branch: row.length > 1 ? 'true' : 'false',
                 fork: (row.length > 1 && k === 0) ? 'true' : 'false',
-                style: 'grid-row: ' + (r + 1) + '; grid-column: ' + (k * span + 1) + ' / span ' + span + ';'
+                style: 'grid-row: ' + (r + 1) + '; grid-column: ' + (k * (12 / row.length) + 1)
+                  + ' / span ' + (12 / row.length) + ';'
                   + (r === 0 ? ' --rail: 0;' : ' --rail: 1;')
                   + ' --fork-w: ' + ((row.length - 1) * 100) + '%;'
               });
             });
           });
+          out.cols = cols;
           return out;
         })()
       })),
