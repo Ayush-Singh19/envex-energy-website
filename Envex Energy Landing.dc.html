@@ -539,6 +539,7 @@
   [data-b-fit] { display: grid; gap: clamp(24px, 3vw, 56px); align-items: start; }
   @media (min-width: 900px) { [data-b-fit] { grid-template-columns: minmax(0, 34fr) minmax(0, 66fr); column-gap: clamp(56px, 5vw, 88px); } }
   [data-b-fitnav] { display: grid; gap: 0; }
+  @media (min-width: 900px) { [data-b-fitnav] { position: sticky; top: 104px; } }
   [data-b-fittab] { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline;
     column-gap: 14px; width: 100%; padding: clamp(15px, 1.6vw, 20px) 0; border: 0; border-top: 1px solid #dfe4dd;
     background: none; text-align: left; cursor: pointer; font: inherit; }
@@ -561,7 +562,7 @@
   [data-b-fitpanel][data-on="true"] { opacity: 1; visibility: visible; transform: none; }
   [data-b-fit-t] { margin: 0; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif;
     font-size: clamp(24px, 2.6vw, 36px); line-height: 1.08; font-weight: 600; letter-spacing: -.028em; color: #082846; }
-  [data-b-fit-b] { margin: 16px 0 0; max-width: 52ch; font-family: Manrope, Helvetica, Arial, sans-serif;
+  [data-b-fit-b] { margin: 22px 0 0; max-width: 52ch; font-family: Manrope, Helvetica, Arial, sans-serif;
     font-size: clamp(16px, 1.45vw, 19px); line-height: 1.56; color: #55687d; text-wrap: pretty; }
   [data-b-fit-cols] { display: grid; gap: clamp(22px, 2.4vw, 40px); margin: 0; grid-template-columns: minmax(0, 1fr); }
   @media (min-width: 620px) { [data-b-fit-cols] { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); } }
@@ -594,6 +595,34 @@
   [data-b-route-node] { width: 5px; height: 5px; border-radius: 50%; background: #8CC63F; flex: 0 0 auto; }
   [data-b-route-step]:last-child [data-b-route-node] { background: #F5B84B; }
   [data-b-route-link] { width: clamp(16px, 2vw, 34px); height: 1px; margin: 0 12px; background: #cfdbe1; flex: 0 0 auto; }
+
+  [data-b-fit-intro] { margin: 28px 0 0; max-width: 62ch; font-family: Manrope, Helvetica, Arial, sans-serif;
+    font-size: clamp(15.5px, 1.35vw, 17.5px); line-height: 1.62; color: #55687d; text-wrap: pretty; }
+
+  /* Schematic: rows of stages on hairline rails. A row with more than one node is
+     a real branch in the work, so the rail forks rather than running straight. */
+  [data-b-schema] { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 4px; row-gap: 0; margin-top: 14px; max-width: 430px; }
+  [data-b-schema-node] { position: relative; display: flex; flex-direction: column; align-items: center;
+    padding: 16px 2px 0; text-align: center; }
+  [data-b-schema-rail] { position: absolute; top: 0; left: 50%; width: 1px; height: 16px;
+    background: #c3d2da; transform: scaleY(var(--rail, 1)); transform-origin: top; }
+  [data-b-schema-node][data-fork="true"]::after { content: ""; position: absolute; top: 0; left: 50%;
+    width: var(--fork-w, 0); height: 1px; background: #c3d2da; }
+  [data-b-schema-dot] { width: 6px; height: 6px; border-radius: 50%; background: #8CC63F; flex: 0 0 auto; }
+  [data-b-schema-node]:last-child [data-b-schema-dot] { background: #F5B84B; }
+  [data-b-schema-t] { margin-top: 9px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px;
+    font-weight: 700; letter-spacing: .14em; text-transform: uppercase; line-height: 1.34; color: #082846; }
+  @media (max-width: 519px) {
+    [data-b-schema] { column-gap: 4px; }
+    [data-b-schema-t] { font-size: 9px; letter-spacing: .1em; }
+  }
+
+  [data-b-profile] { display: grid; gap: 20px 40px; margin-top: clamp(26px, 2.8vw, 34px);
+    padding-top: clamp(20px, 2.2vw, 26px); border-top: 1px solid #e3e7e0; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 520px) { [data-b-profile] { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  [data-b-profile-v] { margin: 10px 0 0; font-family: Manrope, Helvetica, Arial, sans-serif;
+    font-size: clamp(15px, 1.3vw, 16.5px); font-weight: 600; letter-spacing: -.006em; color: #082846; }
 
   [data-b-fit-cta-a] { display: inline-block; transition: transform .28s cubic-bezier(.22,1,.36,1); }
   [data-b-fit-cta]:hover [data-b-fit-cta-a] { transform: translateX(4px); }
@@ -2542,6 +2571,7 @@
       <div data-b-head="" data-reveal="" style="opacity: 0; transform: translateY(20px); transition: opacity .72s cubic-bezier(.22,1,.36,1), transform .72s cubic-bezier(.22,1,.36,1);">
         <p data-b-eyebrow="">Where Envex fits in</p>
         <h2 data-b-h2="">Four ways a project comes to us.</h2>
+        <p data-b-fit-intro="">Which route a project takes depends on what it needs from us &#8212; supply, execution capacity, engineering, or the documentation to get through approvals.</p>
       </div>
 
       <div data-b-fit="" data-reveal="" style="opacity: 0; transform: translateY(20px); transition: opacity .72s cubic-bezier(.22,1,.36,1) 90ms, transform .72s cubic-bezier(.22,1,.36,1) 90ms;">
@@ -2587,11 +2617,26 @@
 
               <div data-b-route="">
                 <p data-b-fit-l="">Project route</p>
-                <ol data-b-route-line="">
-                  <sc-for list="{{ c.route }}" as="r" hint-placeholder-count="4">
-                    <li data-b-route-step=""><span data-b-route-node="" aria-hidden="true"></span>{{ r.text }}<sc-if value="{{ r.notLast }}" hint-placeholder-val="{{ true }}"><span data-b-route-link="" aria-hidden="true"></span></sc-if></li>
+                <div data-b-schema="">
+                  <sc-for list="{{ c.schematic }}" as="n" hint-placeholder-count="5">
+                    <span data-b-schema-node="" data-branch="{{ n.branch }}" data-fork="{{ n.fork }}" style="{{ n.style }}">
+                      <span data-b-schema-rail="" aria-hidden="true"></span>
+                      <span data-b-schema-dot="" aria-hidden="true"></span>
+                      <span data-b-schema-t="">{{ n.text }}</span>
+                    </span>
                   </sc-for>
-                </ol>
+                </div>
+              </div>
+
+              <div data-b-profile="">
+                <div>
+                  <p data-b-fit-l="">Project entry</p>
+                  <p data-b-profile-v="">{{ c.entry }}</p>
+                </div>
+                <div>
+                  <p data-b-fit-l="">Envex role</p>
+                  <p data-b-profile-v="">{{ c.role }}</p>
+                </div>
               </div>
 
               <a href="#/b2b" onClick="{{ goB2bBrief }}" data-b-fit-cta="">Discuss this capability <span data-b-fit-cta-a="" aria-hidden="true">&#8594;</span></a>
@@ -4101,6 +4146,24 @@ class Component extends DCLogic {
      ['Feasibility', 'System design', 'Documentation', 'Approvals']]
   ];
 
+  // Schematic per capability: a list of rows, each row a list of stage labels.
+  // A row with more than one label is a genuine branch, not decoration.
+  static B2B_SCHEMATIC = {
+    channel: [['Project requirement'], ['System quotation'], ['Envex support'],
+              ['Supply', 'Engineering'], ['Execution support']],
+    epc: [['Site'], ['Engineering'], ['Procurement'], ['Execution'], ['Commissioning']],
+    multisite: [['Portfolio'], ['Site 01', 'Site 02', 'Site 03'], ['Coordination'], ['Rollout execution']],
+    engineering: [['Project scope'], ['Technical design'], ['Documentation'], ['Approvals'], ['Execution readiness']]
+  };
+
+  // [ project entry, Envex role ] - both follow from the audience and capability above
+  static B2B_PROFILE = {
+    channel: ['Partner-led', 'Supply'],
+    epc: ['Owner-led', 'EPC'],
+    multisite: ['Portfolio', 'Rollout'],
+    engineering: ['Technical requirement', 'Engineering']
+  };
+
   static B2B_FLOW = [
     ['Share the requirement', 'Tell us what you are building, where, and what support you need.'],
     ['Technical review', 'We review the project scope, site requirements and execution needs.'],
@@ -4670,7 +4733,28 @@ class Component extends DCLogic {
         pick: () => this._pickCap(i),
         engagement: c[4].map(x => ({ text: x })),
         audience: c[5].map((x, k, all) => ({ text: x, notLast: k < all.length - 1 })),
-        route: c[6].map((x, k, all) => ({ text: x, notLast: k < all.length - 1 }))
+        entry: (Component.B2B_PROFILE[c[0]] || [])[0],
+        role: (Component.B2B_PROFILE[c[0]] || [])[1],
+        // flattened so the template needs one loop, not a nested one: each node
+        // carries its own grid placement and whether a rail runs up from it
+        schematic: (() => {
+          const rows = Component.B2B_SCHEMATIC[c[0]] || [];
+          const out = [];
+          rows.forEach((row, r) => {
+            const span = 12 / row.length;
+            row.forEach((label, k) => {
+              out.push({
+                text: label,
+                branch: row.length > 1 ? 'true' : 'false',
+                fork: (row.length > 1 && k === 0) ? 'true' : 'false',
+                style: 'grid-row: ' + (r + 1) + '; grid-column: ' + (k * span + 1) + ' / span ' + span + ';'
+                  + (r === 0 ? ' --rail: 0;' : ' --rail: 1;')
+                  + ' --fork-w: ' + ((row.length - 1) * 100) + '%;'
+              });
+            });
+          });
+          return out;
+        })()
       })),
       b2bFlow: Component.B2B_FLOW.map((f, i) => ({ n: String(i + 1).padStart(2, '0'), title: f[0], body: f[1] })),
       b2bPartners: Component.B2B_PARTNERS.map((pt, i) => ({
