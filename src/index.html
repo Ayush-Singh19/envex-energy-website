@@ -753,23 +753,55 @@
   [data-b-flow-b] { margin: 10px 0 0; max-width: 32ch; font-family: Manrope, Helvetica, Arial, sans-serif;
     font-size: 14px; line-height: 1.56; color: #55687d; text-wrap: pretty; }
 
-  /* partners: editorial grid, not five equal cards */
-  [data-b-partners] { display: grid; gap: 0; grid-template-columns: minmax(0, 1fr); }
-  @media (min-width: 700px) { [data-b-partners] { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 1040px) { [data-b-partners] { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
-  [data-b-partner] { padding: clamp(22px, 2.4vw, 32px) clamp(18px, 2vw, 30px) clamp(24px, 2.6vw, 34px) 0;
-    border-top: 1px solid #cfdbe1; }
+  /* partners: five material cards on an editorial 2-then-3 rhythm, each on its own
+     muted surface from the Envex palette. The six-column track is what makes the two
+     rows different widths without any special-casing per card. */
+  #b2b-partners [data-b-h2] { font-size: clamp(30px, 4vw, 60px); line-height: 1.02; max-width: 16ch; }
+  #b2b-partners [data-b-eyebrow] { margin-bottom: clamp(20px, 2.2vw, 30px); }
+  #b2b-partners [data-b-head] { margin-bottom: clamp(40px, 4.4vw, 60px); }
+  [data-b-partners-lede] { margin: clamp(22px, 2.4vw, 34px) 0 0; max-width: 46ch;
+    font-family: Manrope, Helvetica, Arial, sans-serif; font-size: clamp(15.5px, 1.35vw, 17.5px);
+    line-height: 1.6; color: #4a5c70; text-wrap: pretty; }
   @media (min-width: 1040px) {
-    [data-b-partner] { grid-column: span 2; }
-    [data-b-partner][data-wide="true"] { grid-column: span 3; }
-    [data-b-partner] + [data-b-partner] { padding-left: clamp(18px, 2vw, 30px); }
+    #b2b-partners [data-b-head] { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      column-gap: clamp(40px, 4vw, 80px); align-items: end; }
+    #b2b-partners [data-b-eyebrow] { grid-column: 1 / -1; }
+    [data-b-partners-lede] { margin: 0 0 6px; }
   }
-  [data-b-partner-n] { font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 10.5px; font-weight: 700;
-    letter-spacing: .2em; font-variant-numeric: tabular-nums; color: #6FA82B; }
-  [data-b-partner-t] { margin: 12px 0 0; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif;
-    font-size: clamp(20px, 2.1vw, 28px); line-height: 1.1; font-weight: 600; letter-spacing: -.026em; color: #082846; }
+
+  [data-b-partners] { display: grid; gap: clamp(12px, 1.3vw, 18px); grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 700px) and (max-width: 1039px) {
+    [data-b-partners] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    [data-b-partner]:last-child { grid-column: 1 / -1; }
+  }
+  @media (min-width: 1040px) { [data-b-partners] { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+  [data-b-partner] { position: relative; display: flex; flex-direction: column; overflow: hidden;
+    box-sizing: border-box; min-height: 210px; border-radius: 12px; border: 1px solid transparent;
+    padding: clamp(22px, 2.3vw, 30px) clamp(20px, 2.1vw, 28px) clamp(20px, 2.1vw, 26px);
+    text-decoration: none; }
+  @media (min-width: 1040px) {
+    [data-b-partner] { grid-column: span 2; min-height: 236px; }
+    [data-b-partner][data-wide="true"] { grid-column: span 3; min-height: 248px; }
+  }
+  [data-b-partner-n] { font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 11.5px; font-weight: 700;
+    letter-spacing: .2em; font-variant-numeric: tabular-nums; color: #46711F; }
+  [data-b-partner-t] { margin: 13px 0 0; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif;
+    font-size: clamp(21px, 2.1vw, 28px); line-height: 1.08; font-weight: 600; letter-spacing: -.026em; color: #082846; }
   [data-b-partner-b] { margin: 11px 0 0; max-width: 34ch; font-family: Manrope, Helvetica, Arial, sans-serif;
-    font-size: 15px; line-height: 1.58; color: #55687d; text-wrap: pretty; }
+    font-size: 15px; line-height: 1.55; color: #4a5c70; text-wrap: pretty; }
+
+  /* surface tones. Each card carries a slightly richer tone on hover and a border a shade
+     down from its own fill, so the set still reads as one system rather than five sites. */
+  [data-b-partner][data-motif="dealers"]     { background: #E7F2D8; border-color: #d7e8c2; }
+  [data-b-partner][data-motif="epc"]         { background: #DCEAF3; border-color: #c8dded; }
+  [data-b-partner][data-motif="developers"]  { background: #F4E8D2; border-color: #e8d8ba; }
+  [data-b-partner][data-motif="multisite"]   { background: #E1EBDD; border-color: #cfdfca; }
+  [data-b-partner][data-motif="consultants"] { background: #F8E9C5; border-color: #eedaa8; }
+
+  /* the motif sits in the lower-right corner, never behind the copy */
+  [data-b-partner-fig] { position: absolute; right: clamp(14px, 1.6vw, 22px); bottom: clamp(14px, 1.6vw, 22px);
+    width: clamp(74px, 7.4vw, 104px); height: clamp(74px, 7.4vw, 104px); opacity: .17;
+    background-repeat: no-repeat; background-position: center; background-size: contain; pointer-events: none; }
 
   /* trust */
   [data-b-trust] { display: grid; gap: clamp(26px, 3vw, 46px) clamp(26px, 3vw, 56px); margin-top: clamp(30px, 3.4vw, 48px);
@@ -1122,16 +1154,47 @@
   [data-b-strip-b] { transition: color .26s ease; }
   [data-b-strip-item]:focus-visible { outline: 2px solid #8CC63F; outline-offset: 2px; }
 
-  /* partner rows */
-  [data-b-partner] { position: relative; transition: background .26s ease, transform .26s cubic-bezier(.22,1,.36,1); outline: none; }
-  [data-b-partner-mark] { position: absolute; left: 0; top: -1px; height: 2px; width: 0; background: #8CC63F;
-    transition: width .4s cubic-bezier(.22,1,.36,1); }
-  [data-b-partner-a] { display: inline-block; margin-top: 12px; font-size: 16px; color: #93a4b3;
-    transition: transform .28s cubic-bezier(.22,1,.36,1), color .28s ease; }
-  [data-b-partner]:hover, [data-b-partner]:focus-visible { background: rgba(8,40,70,.03); transform: translateY(-2px); }
+  /* Technical line motifs. Each is a minimal drawing of the relationship the card
+     describes - a distribution run, a truss, a site plan, coordinated sites, a
+     drawing sheet - not an icon-library symbol. */
+  [data-b-partner][data-motif="dealers"] [data-b-partner-fig] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' fill='none' stroke='%23082846' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='50' cy='14' r='6'/%3E%3Cpath d='M50 20v14M16 34h68M16 34v14M50 34v14M84 34v14'/%3E%3Ccircle cx='16' cy='54' r='6'/%3E%3Ccircle cx='50' cy='54' r='6'/%3E%3Ccircle cx='84' cy='54' r='6'/%3E%3Cpath d='M16 60v12M50 60v12M84 60v12M8 78h16M42 78h16M76 78h16'/%3E%3C/svg%3E"); }
+  [data-b-partner][data-motif="epc"] [data-b-partner-fig] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' fill='none' stroke='%23082846' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 28h84M8 76h84M8 28v48M92 28v48'/%3E%3Cpath d='M8 76 29 28 50 76 71 28 92 76'/%3E%3Cpath d='M29 28v48M50 28v48M71 28v48' stroke-opacity='.45'/%3E%3C/svg%3E"); }
+  [data-b-partner][data-motif="developers"] [data-b-partner-fig] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' fill='none' stroke='%23082846' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 16h84v68H8z'/%3E%3Cpath d='M18 26h30v26H18z'/%3E%3Cpath d='M56 26h26v12H56zM56 44h26v12H56zM18 62h64v12H18z' stroke-opacity='.55'/%3E%3Cpath d='M8 38h10M82 84V74' stroke-opacity='.45'/%3E%3C/svg%3E"); }
+  [data-b-partner][data-motif="multisite"] [data-b-partner-fig] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' fill='none' stroke='%23082846' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M50 50 16 18M50 50 84 18M50 50 16 82M50 50 84 82' stroke-opacity='.5'/%3E%3Ccircle cx='50' cy='50' r='7'/%3E%3Cpath d='M9 11h14v14H9zM77 11h14v14H77zM9 75h14v14H9zM77 75h14v14H77z'/%3E%3C/svg%3E"); }
+  [data-b-partner][data-motif="consultants"] [data-b-partner-fig] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' fill='none' stroke='%23082846' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 12h62l18 18v46H10z'/%3E%3Cpath d='M72 12v18h18'/%3E%3Cpath d='M22 44h34M22 56h44' stroke-opacity='.55'/%3E%3Cpath d='M22 84v8M66 84v8M22 88h44M22 88l6-4M22 88l6 4M66 88l-6-4M66 88l-6 4' stroke-opacity='.7'/%3E%3C/svg%3E"); }
+
+  /* partner cards */
+  [data-b-partner] { transition: background-color .34s ease, border-color .34s ease,
+    transform .34s cubic-bezier(.22,1,.36,1); outline: none; }
+  [data-b-partner-mark] { position: absolute; left: 0; top: 0; height: 2px; width: 0; background: #8CC63F;
+    transition: width .42s cubic-bezier(.22,1,.36,1); }
+  [data-b-partner-go] { display: inline-flex; align-items: center; gap: 9px; margin-top: auto; padding-top: 18px; }
+  [data-b-partner-go-t] { font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase; color: #35506b; transition: color .3s ease; }
+  [data-b-partner-a] { display: inline-block; font-size: 16px; line-height: 1; color: #35506b;
+    transition: transform .3s cubic-bezier(.22,1,.36,1), color .3s ease; }
+  [data-b-partner-fig] { transition: opacity .34s ease; }
+
+  [data-b-partner]:hover, [data-b-partner]:focus-visible { transform: translateY(-4px); }
   [data-b-partner]:hover [data-b-partner-mark], [data-b-partner]:focus-visible [data-b-partner-mark] { width: 100%; }
-  [data-b-partner]:hover [data-b-partner-a], [data-b-partner]:focus-visible [data-b-partner-a] { transform: translateX(5px); color: #6FA82B; }
-  [data-b-partner]:focus-visible { outline: 2px solid #8CC63F; outline-offset: 2px; }
+  [data-b-partner]:hover [data-b-partner-fig], [data-b-partner]:focus-visible [data-b-partner-fig] { opacity: .3; }
+  [data-b-partner]:hover [data-b-partner-t], [data-b-partner]:focus-visible [data-b-partner-t] { color: #041c34; }
+  [data-b-partner]:hover [data-b-partner-go-t], [data-b-partner]:focus-visible [data-b-partner-go-t],
+  [data-b-partner]:hover [data-b-partner-a], [data-b-partner]:focus-visible [data-b-partner-a] { color: #082846; }
+  [data-b-partner]:hover [data-b-partner-a], [data-b-partner]:focus-visible [data-b-partner-a] { transform: translateX(5px); }
+  [data-b-partner]:focus-visible { outline: 2px solid #46711F; outline-offset: 3px; }
+
+  /* the hover tone is one step richer than the resting fill, never a different hue */
+  [data-b-partner][data-motif="dealers"]:hover,     [data-b-partner][data-motif="dealers"]:focus-visible     { background: #DDEDC8; border-color: #c2dda6; }
+  [data-b-partner][data-motif="epc"]:hover,         [data-b-partner][data-motif="epc"]:focus-visible         { background: #CFE3EF; border-color: #b2d1e4; }
+  [data-b-partner][data-motif="developers"]:hover,  [data-b-partner][data-motif="developers"]:focus-visible  { background: #EEDFC0; border-color: #ddcaa4; }
+  [data-b-partner][data-motif="multisite"]:hover,   [data-b-partner][data-motif="multisite"]:focus-visible   { background: #D7E4D2; border-color: #bed2b7; }
+  [data-b-partner][data-motif="consultants"]:hover, [data-b-partner][data-motif="consultants"]:focus-visible { background: #F4E1B2; border-color: #e6cd92; }
 
   /* working standards */
   [data-b-trust-item] { position: relative; transition: background .26s ease; outline: none; }
@@ -1162,7 +1225,7 @@
   @media (prefers-reduced-motion: reduce) {
     [data-bh-index-item], [data-bh-index-item]::before, [data-bh-index-n],
     [data-b-strip-item], [data-b-strip-node], [data-b-strip-b], [data-b-partner], [data-b-partner-mark],
-    [data-b-partner-a], [data-b-trust-rule], [data-b-trust-n], [data-b-step-dot], [data-b-step-mark] {
+    [data-b-partner-a], [data-b-partner-fig], [data-b-trust-rule], [data-b-trust-n], [data-b-step-dot], [data-b-step-mark] {
       transition: none !important; transform: none !important; }
   }
   [data-stmt-grid] { grid-template-columns: minmax(0, 1fr); }
@@ -2741,21 +2804,23 @@
     </div>
   </section>
 
-  <section data-screen-label="B2B partners" style="box-sizing: border-box; padding: clamp(58px, 6.8vw, 106px) clamp(20px, 6vw, 80px); background: #EAF1F4; border-top: 1px solid #dce6ea; border-bottom: 1px solid #dce6ea;">
+  <section id="b2b-partners" data-screen-label="B2B partners" style="box-sizing: border-box; padding: clamp(58px, 6.8vw, 106px) clamp(20px, 6vw, 80px); background: #ffffff; border-top: 1px solid #e6ecee; border-bottom: 1px solid #e6ecee;">
     <div style="max-width: 1240px; margin: 0 auto;">
       <div data-b-head="" data-reveal="" style="opacity: 0; transform: translateY(20px); transition: opacity .72s cubic-bezier(.22,1,.36,1), transform .72s cubic-bezier(.22,1,.36,1);">
         <p data-b-eyebrow="">Who we work with</p>
         <h2 data-b-h2="">One energy partner. Different ways to work together.</h2>
+        <p data-b-partners-lede="">From channel partners to project developers, Envex works with different teams at different stages of a solar project.</p>
       </div>
       <div data-b-partners="" data-reveal="" style="opacity: 0; transform: translateY(20px); transition: opacity .72s cubic-bezier(.22,1,.36,1) 80ms, transform .72s cubic-bezier(.22,1,.36,1) 80ms;">
         <sc-for list="{{ b2bPartners }}" as="pt" hint-placeholder-count="5">
-          <div data-b-partner="" data-wide="{{ pt.wide }}" tabindex="0">
+          <a href="#/b2b" onClick="{{ pt.go }}" data-b-partner="" data-motif="{{ pt.key }}" data-wide="{{ pt.wide }}">
             <span data-b-partner-mark="" aria-hidden="true"></span>
+            <span data-b-partner-fig="" aria-hidden="true"></span>
             <span data-b-partner-n="">{{ pt.n }}</span>
             <h3 data-b-partner-t="">{{ pt.title }}</h3>
             <p data-b-partner-b="">{{ pt.body }}</p>
-            <span data-b-partner-a="" aria-hidden="true">&#8594;</span>
-          </div>
+            <span data-b-partner-go=""><span data-b-partner-go-t="">Start a project brief</span><span data-b-partner-a="" aria-hidden="true">&#8594;</span></span>
+          </a>
         </sc-for>
       </div>
     </div>
@@ -4228,12 +4293,13 @@ class Component extends DCLogic {
     ['Project execution', 'Engineering, supply, execution or support begins according to the agreed scope.']
   ];
 
+  // [ title, description, key ] - the key selects the card's surface tone and line motif
   static B2B_PARTNERS = [
-    ['Dealers & resellers', 'Supply and engineering support behind what you sell.'],
-    ['EPC contractors', 'Execution capacity and technical support on projects you have won.'],
-    ['Developers', 'Project development and engineering from the early stages.'],
-    ['Multi-site businesses', 'Standardised deployment and coordination across locations.'],
-    ['Consultants', 'Technical design and documentation as a consultancy scope.']
+    ['Dealers & resellers', 'Supply and engineering support behind what you sell.', 'dealers'],
+    ['EPC contractors', 'Execution capacity and technical support on projects you have won.', 'epc'],
+    ['Developers', 'Project development and engineering from the early stages.', 'developers'],
+    ['Multi-site businesses', 'Standardised deployment and coordination across locations.', 'multisite'],
+    ['Consultants', 'Technical design and documentation as a consultancy scope.', 'consultants']
   ];
 
   static B2B_TRUST = [
@@ -4818,8 +4884,11 @@ class Component extends DCLogic {
       b2bFlow: Component.B2B_FLOW.map((f, i) => ({ n: String(i + 1).padStart(2, '0'), title: f[0], body: f[1] })),
       b2bPartners: Component.B2B_PARTNERS.map((pt, i) => ({
         n: String(i + 1).padStart(2, '0'), title: pt[0], body: pt[1],
+        // the key drives the card's surface tone and its technical motif, both in CSS
+        key: pt[2],
         // two wide, three narrow: tiles cleanly across six columns instead of leaving a ragged gap
-        wide: i < 2 ? 'true' : 'false'
+        wide: i < 2 ? 'true' : 'false',
+        go: this._goRoute('#/b2b', 'b2b-brief')
       })),
       b2bTrust: Component.B2B_TRUST.map((t, i) => ({ n: String(i + 1).padStart(2, '0'), label: t[0], title: t[1], body: t[2] })),
 
