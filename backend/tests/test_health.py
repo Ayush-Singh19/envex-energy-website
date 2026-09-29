@@ -1,0 +1,48 @@
+import httpx
+
+
+async def test_health_reports_db_ok(client: httpx.AsyncClient) -> None:
+    res = await client.get("/api/v1/health")
+    assert res.status_code == 200
+    assert res.json() == {"status": "ok", "db": "ok"}
+
+
+async def test_security_headers_present(client: httpx.AsyncClient) -> None:
+    res = await client.get("/api/v1/health")
+    assert res.headers["x-frame-options"] == "DENY"
+    assert res.headers["x-content-type-options"] == "nosniff"
+    # CSP is scoped to the admin UI; HSTS only in production.
+    assert "content-security-policy" not in res.headers
+    assert "strict-transport-security" not in res.headers
+
+
+async def test_request_id_generated_and_echoed(client: httpx.AsyncClient) -> None:
+    generated = await client.get("/api/v1/health")
+    assert len(generated.headers["x-request-id"]) == 32
+
+    echoed = await client.get("/api/v1/health", headers={"X-Request-ID": "abc-123"})
+    assert echoed.headers["x-request-id"] == "abc-123"
+
+    # Junk IDs are replaced rather than reflected into logs/headers.
+    junk = await client.get("/api/v1/health", headers={"X-Request-ID": "<script>"})
+    assert junk.headers["x-request-id"] != "<script>"
+
+
+async def test_unknown_route_uses_error_shape(client: httpx.AsyncClient) -> None:
+    res = await client.get("/api/v1/does-not-exist")
+    assert res.status_code == 404
+    assert res.json() == {"error": {"code": "not_found", "message": "Not Found"}}
+
+
+async def test_cors_allows_frontend_only(client: httpx.AsyncClient) -> None:
+    ok = await client.options(
+        "/api/v1/health",
+        headers={"Origin": "http://localhost:5500", "Access-Control-Request-Method": "GET"},
+    )
+    assert ok.headers.get("access-control-allow-origin") == "http://localhost:5500"
+
+    bad = await client.options(
+        "/api/v1/health",
+        headers={"Origin": "https://evil.example", "Access-Control-Request-Method": "GET"},
+    )
+    assert "access-control-allow-origin" not in bad.headers

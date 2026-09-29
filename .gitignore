@@ -39,3 +39,7 @@ coverage/
 
 # Editor state written by the Claude Design image-slot tooling
 .image-slots.state.json
+
+# Backend (Python)
+.venv/
+__pycache__/
