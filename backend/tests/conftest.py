@@ -7,7 +7,7 @@ before each test, so tests are independent and the migration itself is exercised
 
 import asyncio
 import os
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable, Iterator
 from pathlib import Path
 
 # Settings must be in place before any app module is imported.
@@ -92,8 +92,51 @@ async def session() -> AsyncIterator[AsyncSession]:
 
 @pytest.fixture
 async def client() -> AsyncIterator[httpx.AsyncClient]:
+    async with make_client("203.0.113.10") as c:
+        yield c
+
+
+@pytest.fixture(autouse=True)
+def _reset_rate_limits() -> None:
+    from app.core.rate_limit import limiter
+
+    limiter.reset()
+
+
+@pytest.fixture
+def override_settings() -> Iterator[Callable[..., None]]:
+    """Swap selected settings for one test, e.g. ``override_settings(smtp_host="x")``."""
+    from app.core.config import get_settings
     from app.main import app
 
-    transport = httpx.ASGITransport(app=app, client=("203.0.113.10", 51000))
-    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
-        yield c
+    def _apply(**changes: object) -> None:
+        patched = get_settings().model_copy(update=changes)
+        app.dependency_overrides[get_settings] = lambda: patched
+
+    yield _apply
+    app.dependency_overrides.pop(get_settings, None)
+
+
+def make_client(ip: str) -> httpx.AsyncClient:
+    from app.main import app
+
+    transport = httpx.ASGITransport(app=app, client=(ip, 51000))
+    return httpx.AsyncClient(transport=transport, base_url="http://testserver")
+
+
+def valid_enquiry(**overrides: object) -> dict[str, object]:
+    payload: dict[str, object] = {
+        "name": "Asha Rawat",
+        "company": "Rawat Cold Storage",
+        "phone": "98765 43210",
+        "email": "asha@example.com",
+        "location": "Dehradun",
+        "project_type": "Rooftop solar",
+        "system_size": "5 kW",
+        "message": "Roof is about 800 sq ft, south facing.",
+        "consent": True,
+        "website": "",
+        "source_page": "/",
+    }
+    payload.update(overrides)
+    return payload
