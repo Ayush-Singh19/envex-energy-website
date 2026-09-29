@@ -12,7 +12,7 @@ from pathlib import Path
 
 # Settings must be in place before any app module is imported.
 TEST_DATABASE_URL = os.environ.get(
-    "TEST_DATABASE_URL", "postgresql+asyncpg://envex@localhost:5433/envex_test"
+    "TEST_DATABASE_URL", "postgresql+asyncpg://envex:envex@localhost:5432/envex_test"
 )
 os.environ.update(
     {

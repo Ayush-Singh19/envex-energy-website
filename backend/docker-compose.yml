@@ -10,7 +10,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-envex}
       POSTGRES_DB: envex
     ports:
-      - "5432:5432"
+      # Override if 5432 is taken (e.g. a native Postgres install): POSTGRES_PORT=5434
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./docker/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
