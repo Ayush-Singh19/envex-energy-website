@@ -27,12 +27,29 @@ EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
 class EnquiryStatus(enum.StrEnum):
+    """Lead pipeline, in the order the admin dropdown shows it. Any status can be set any time."""
+
     NEW = "new"
-    CONTACTED = "contacted"
-    QUOTED = "quoted"
+    CALLED = "called"
+    SITE_VISIT = "site_visit"
+    QUOTE_SENT = "quote_sent"
     WON = "won"
     LOST = "lost"
-    SPAM = "spam"
+    NOT_RELEVANT = "not_relevant"
+
+
+STATUS_LABELS: dict[EnquiryStatus, str] = {
+    EnquiryStatus.NEW: "New",
+    EnquiryStatus.CALLED: "Called",
+    EnquiryStatus.SITE_VISIT: "Site visit",
+    EnquiryStatus.QUOTE_SENT: "Quote sent",
+    EnquiryStatus.WON: "Won",
+    EnquiryStatus.LOST: "Lost",
+    EnquiryStatus.NOT_RELEVANT: "Not relevant",
+}
+
+# Leads that no longer need follow-up.
+CLOSED_STATUSES = frozenset({EnquiryStatus.WON, EnquiryStatus.LOST, EnquiryStatus.NOT_RELEVANT})
 
 
 class ClickType(enum.StrEnum):
@@ -52,5 +69,7 @@ class AuditAction(enum.StrEnum):
 
 
 AUTH_COOKIE_NAME = "envex_admin"
+PASSWORD_MIN_LENGTH = 12
+PASSWORD_MAX_BYTES = 72  # bcrypt ignores anything past 72 bytes, so we refuse it instead
 MAX_FAILED_LOGINS = 5
 LOCKOUT_MINUTES = 15

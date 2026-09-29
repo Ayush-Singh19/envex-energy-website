@@ -37,3 +37,19 @@ def build_whatsapp_url(whatsapp_number: str, text: str) -> str:
     input can never break out of the ``text`` parameter.
     """
     return f"https://wa.me/{whatsapp_number}?text={quote(text, safe='')}"
+
+
+def build_customer_reply_message(
+    *, company_name: str, name: str, project_type: str, reference: str
+) -> str:
+    """Opening line when the team messages a customer from the admin page."""
+    first_name = name.split()[0] if name.split() else name
+    return (
+        f"Hello {first_name}, this is {company_name} about your {project_type.lower()} "
+        f"enquiry ({reference}). Is this a good time to talk?"
+    )
+
+
+def customer_whatsapp_url(phone_e164: str, text: str) -> str:
+    """wa.me wants the number as digits only, without '+'."""
+    return build_whatsapp_url(phone_e164.lstrip("+"), text)

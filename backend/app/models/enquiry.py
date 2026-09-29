@@ -29,6 +29,7 @@ class Enquiry(Base):
         default=EnquiryStatus.NEW,
         server_default=EnquiryStatus.NEW.value,
     )
+    status_changed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     follow_up_date: Mapped[date | None] = mapped_column(Date)
     is_duplicate: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"))
     duplicate_of: Mapped[uuid.UUID | None] = mapped_column(

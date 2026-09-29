@@ -9,6 +9,7 @@ import asyncio
 import os
 from collections.abc import AsyncIterator, Callable, Iterator
 from pathlib import Path
+from typing import Any
 
 # Settings must be in place before any app module is imported.
 TEST_DATABASE_URL = os.environ.get(
@@ -140,3 +141,57 @@ def valid_enquiry(**overrides: object) -> dict[str, object]:
     }
     payload.update(overrides)
     return payload
+
+
+# ---- admin fixtures ---------------------------------------------------------------------
+
+ADMIN_EMAIL = "owner@example.com"
+ADMIN_PASSWORD = "Correct-Horse-Battery-9"  # test-only
+
+
+@pytest.fixture(autouse=True)
+def _fast_bcrypt(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Production uses 12 rounds; 4 keeps the suite quick while exercising the same code.
+    monkeypatch.setattr("app.core.security.BCRYPT_ROUNDS", 4)
+
+
+@pytest.fixture
+async def admin_user(session: AsyncSession) -> Any:
+    from app.services.auth_service import create_or_reset_admin
+
+    admin, _ = await create_or_reset_admin(
+        session, email=ADMIN_EMAIL, full_name="Test Owner", password=ADMIN_PASSWORD, reset=False
+    )
+    return admin
+
+
+@pytest.fixture
+async def admin_client(admin_user: Any) -> AsyncIterator[httpx.AsyncClient]:
+    async with make_client("192.0.2.50") as c:
+        res = await c.post(
+            "/api/v1/auth/login", json={"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD}
+        )
+        assert res.status_code == 200, res.text
+        yield c
+
+
+async def make_enquiry(session: AsyncSession, **overrides: Any) -> Any:
+    """Insert an enquiry directly (bypasses the public rate limit)."""
+    import uuid as _uuid
+
+    from app.models import Enquiry
+
+    fields: dict[str, Any] = {
+        "id": _uuid.uuid4(),
+        "name": "Asha Rawat",
+        "phone": "+919876543210",
+        "email": "asha@example.com",
+        "location": "Dehradun",
+        "project_type": "Rooftop solar",
+        "consent": True,
+    }
+    fields.update(overrides)
+    enquiry = Enquiry(**fields)
+    session.add(enquiry)
+    await session.commit()
+    return enquiry

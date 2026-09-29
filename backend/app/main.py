@@ -1,12 +1,15 @@
 """App factory: settings, logging, middleware, error handlers and routers."""
 
 import logging
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from slowapi.errors import RateLimitExceeded
 
-from app.api.v1 import public
+from app.api.v1 import admin, auth, public
 from app.core.config import Settings, get_settings
 from app.core.errors import register_exception_handlers
 from app.core.logging import configure_logging
@@ -14,6 +17,7 @@ from app.core.middleware import RequestContextMiddleware, SecurityHeadersMiddlew
 from app.core.rate_limit import limiter, rate_limit_exceeded_handler
 
 API_PREFIX = "/api/v1"
+ADMIN_UI_DIR = Path(__file__).resolve().parent / "admin_ui"
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +67,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.add_middleware(RequestContextMiddleware)
 
     app.include_router(public.router, prefix=API_PREFIX)
+    app.include_router(auth.router, prefix=API_PREFIX)
+    app.include_router(admin.router, prefix=API_PREFIX)
+
+    # Admin dashboard: static HTML/CSS/JS, same origin as the API (so the cookie just works).
+    @app.get("/", include_in_schema=False)
+    async def _root() -> RedirectResponse:
+        return RedirectResponse("/admin/")
+
+    app.mount("/admin", StaticFiles(directory=ADMIN_UI_DIR, html=True), name="admin")
 
     logger.info("app_started", extra={"env": settings.app_env})
     return app

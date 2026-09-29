@@ -6,6 +6,7 @@ purpose: they must come from configuration, never from code.
 
 from functools import lru_cache
 from typing import Literal
+from zoneinfo import ZoneInfo
 
 from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -49,6 +50,12 @@ class Settings(BaseSettings):
 
     sentry_dsn: str = ""
 
+    # "Today", "this week" and follow-up dates are the business's local days.
+    timezone: str = "Asia/Kolkata"
+    rate_limit_login: str = "10/minute"
+    # Proxies in front of the app that append to X-Forwarded-For (1 on Render/Railway).
+    trusted_proxy_hops: int = Field(default=0, ge=0, le=5)
+
     @field_validator("database_url")
     @classmethod
     def _use_asyncpg_driver(cls, v: str) -> str:
@@ -62,6 +69,10 @@ class Settings(BaseSettings):
     @classmethod
     def _strip_trailing_slash(cls, v: str) -> str:
         return v.rstrip("/")
+
+    @property
+    def tz(self) -> ZoneInfo:
+        return ZoneInfo(self.timezone)
 
     @property
     def is_production(self) -> bool:

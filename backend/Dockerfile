@@ -21,14 +21,14 @@ COPY --from=builder --chown=envex:envex /app /app
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PORT=8000 \
-    FORWARDED_ALLOW_IPS="*"
+    PORT=8000
 USER envex
 EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD python -c "import os,urllib.request; urllib.request.urlopen(f'http://127.0.0.1:{os.environ[\"PORT\"]}/api/v1/health', timeout=4)"
 
-# Apply migrations, then serve. --proxy-headers makes request.client the real visitor IP
-# behind Render/Railway's proxy (needed for per-IP rate limits).
-CMD ["sh", "-c", "alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --proxy-headers --forwarded-allow-ips \"${FORWARDED_ALLOW_IPS}\""]
+# Apply migrations, then serve. Proxy headers are handled in app.core.client_ip
+# (set TRUSTED_PROXY_HOPS=1 behind Render/Railway), not by uvicorn, which would trust
+# client-supplied X-Forwarded-For values when told to trust every proxy.
+CMD ["sh", "-c", "alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --no-proxy-headers"]
