@@ -6,7 +6,7 @@ user sees the same wording whichever side catches the problem.
 
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
 
 from app.core.constants import EMAIL_PATTERN, PROJECT_TYPES
 from app.core.phone import normalise_phone
@@ -14,7 +14,8 @@ from app.core.phone import normalise_phone
 
 class EnquiryCreate(BaseModel):
     # validate_default: a missing required field must hit its validator (and its message).
-    model_config = ConfigDict(str_strip_whitespace=True, extra="ignore", validate_default=True)
+    # extra="forbid": unknown fields are rejected, not silently dropped.
+    model_config = ConfigDict(str_strip_whitespace=True, extra="forbid", validate_default=True)
 
     name: str = Field(default="", max_length=120)
     company: str | None = Field(default=None, max_length=160)
@@ -24,7 +25,7 @@ class EnquiryCreate(BaseModel):
     project_type: str = Field(default="", max_length=60, examples=[PROJECT_TYPES[1]])
     system_size: str | None = Field(default=None, max_length=60)
     message: str | None = Field(default=None, max_length=4000)
-    consent: bool = False
+    consent: StrictBool = False  # JSON true only; "true" or 1 are rejected
 
     # Honeypot: hidden from people, filled in by naive bots. Must be empty.
     website: str | None = Field(default=None, max_length=300)

@@ -7,7 +7,7 @@ stay in the database but are not sent to the admin page.
 import uuid
 from datetime import date, datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from app.core.constants import EnquiryStatus
 from app.schemas.note import NoteOut
@@ -63,6 +63,8 @@ class EnquiryPage(BaseModel):
 
 class EnquiryUpdate(BaseModel):
     """PATCH body. Send only what changes; ``follow_up_date: null`` clears the date."""
+
+    model_config = ConfigDict(extra="forbid")
 
     status: EnquiryStatus | None = None
     follow_up_date: date | None = None

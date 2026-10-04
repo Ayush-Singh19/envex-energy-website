@@ -162,6 +162,21 @@ async def admin_user(session: AsyncSession) -> Any:
     admin, _ = await create_or_reset_admin(
         session, email=ADMIN_EMAIL, full_name="Test Owner", password=ADMIN_PASSWORD, reset=False
     )
+    # An admin who has already replaced the seed password. The forced first-login
+    # change has its own tests (seed_admin fixture).
+    admin.must_change_password = False
+    await session.commit()
+    return admin
+
+
+@pytest.fixture
+async def seed_admin(session: AsyncSession) -> Any:
+    """Freshly created from the CLI: must change the seed password before anything else."""
+    from app.services.auth_service import create_or_reset_admin
+
+    admin, _ = await create_or_reset_admin(
+        session, email=ADMIN_EMAIL, full_name="Test Owner", password=ADMIN_PASSWORD, reset=False
+    )
     return admin
 
 

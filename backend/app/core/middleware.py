@@ -1,28 +1,32 @@
-"""Request-ID, request logging and security headers.
+"""Request-ID, request logging, request size limit and security headers.
 
 Written as pure ASGI middleware so it doesn't interfere with background tasks or
 streaming responses (the CSV export streams).
 """
 
+import ipaddress
+import json
 import logging
 import re
 import time
 import uuid
 
 from starlette.datastructures import MutableHeaders
+from starlette.requests import Request
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
+from app.core.client_ip import client_ip
 from app.core.logging import request_id_var
 
 logger = logging.getLogger("app.request")
 
 _REQUEST_ID_RE = re.compile(r"^[A-Za-z0-9\-_.]{1,64}$")
 
-# Admin UI loads Chart.js from jsDelivr and Manrope from Google Fonts. Nothing else.
+# The admin UI runs only its own script, and loads Manrope from Google Fonts. Nothing else.
 ADMIN_CSP = "; ".join(
     [
         "default-src 'self'",
-        "script-src 'self' https://cdn.jsdelivr.net",
+        "script-src 'self'",
         "style-src 'self' https://fonts.googleapis.com",
         "font-src https://fonts.gstatic.com",
         "img-src 'self' data:",
@@ -34,11 +38,24 @@ ADMIN_CSP = "; ".join(
 )
 
 
+def truncate_ip(ip: str | None) -> str | None:
+    """203.0.113.57 -> 203.0.113.0; IPv6 keeps the /48 prefix. Enough to spot abuse
+    patterns, not enough to identify a person."""
+    if not ip:
+        return None
+    try:
+        addr = ipaddress.ip_address(ip)
+    except ValueError:
+        return None
+    prefix = 24 if addr.version == 4 else 48
+    return str(ipaddress.ip_network(f"{addr}/{prefix}", strict=False).network_address)
+
+
 class RequestContextMiddleware:
     """Assigns an X-Request-ID (or accepts a sane incoming one) and logs one line per request.
 
-    Only method, path, status and timing are logged: no query strings, bodies or
-    headers, so personal data never reaches the logs.
+    Only method, path, status, timing and a truncated client IP are logged: no query
+    strings, bodies or headers, so personal data never reaches the logs.
     """
 
     def __init__(self, app: ASGIApp) -> None:
@@ -72,9 +89,85 @@ class RequestContextMiddleware:
                     "path": scope["path"],
                     "status": status,
                     "duration_ms": round((time.perf_counter() - start) * 1000, 1),
+                    "client": truncate_ip(client_ip(Request(scope))),
                 },
             )
             request_id_var.reset(token)
+
+
+class BodySizeLimitMiddleware:
+    """Rejects request bodies over max_bytes with 413, before any route parses them.
+
+    Checks the declared Content-Length up front, and counts streamed (chunked) bodies as
+    they arrive, so a missing or false header doesn't get around the limit.
+    """
+
+    def __init__(self, app: ASGIApp, *, max_bytes: int) -> None:
+        self.app = app
+        self.max_bytes = max_bytes
+
+    async def _reject(self, send: Send) -> None:
+        body = json.dumps(
+            {"error": {"code": "payload_too_large", "message": "The request is too large."}}
+        ).encode()
+        await send(
+            {
+                "type": "http.response.start",
+                "status": 413,
+                "headers": [
+                    (b"content-type", b"application/json"),
+                    (b"content-length", str(len(body)).encode()),
+                ],
+            }
+        )
+        await send({"type": "http.response.body", "body": body})
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+
+        declared = dict(scope["headers"]).get(b"content-length")
+        if declared is not None:
+            try:
+                too_big = int(declared) > self.max_bytes
+            except ValueError:
+                too_big = True
+            if too_big:
+                await self._reject(send)
+                return
+
+        received = 0
+        started = False
+        rejected = False
+
+        # Raising from receive() doesn't work: FastAPI turns any error while reading the body
+        # into a 400. Instead, answer 413 ourselves, tell the app the client went away, and
+        # drop whatever the app then tries to send.
+        async def limited_receive() -> Message:
+            nonlocal received, rejected, started
+            if rejected:
+                return {"type": "http.disconnect"}
+            message = await receive()
+            if message["type"] == "http.request":
+                received += len(message.get("body", b""))
+                if received > self.max_bytes:
+                    rejected = True
+                    if not started:
+                        started = True
+                        await self._reject(send)
+                    return {"type": "http.disconnect"}
+            return message
+
+        async def tracking_send(message: Message) -> None:
+            nonlocal started
+            if rejected:
+                return
+            if message["type"] == "http.response.start":
+                started = True
+            await send(message)
+
+        await self.app(scope, limited_receive, tracking_send)
 
 
 class SecurityHeadersMiddleware:

@@ -20,6 +20,13 @@ class AdminUser(Base):
     failed_attempts: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
     locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    # Sessions issued before this moment are rejected (set on password change/reset).
     password_changed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Copied into every session token; bumping it (password change or reset) makes every
+    # older token invalid at once.
+    token_version: Mapped[int] = mapped_column(Integer, default=0, server_default=text("0"))
+    # Set when an admin is created or reset from the CLI: the admin page refuses everything
+    # except "change password" until the seed password has been replaced.
+    must_change_password: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false")
+    )
     created_at: Mapped[CreatedAt]

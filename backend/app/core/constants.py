@@ -66,9 +66,12 @@ class AuditAction(enum.StrEnum):
     UPDATE = "update"
     ADD_NOTE = "add_note"
     EXPORT = "export"
+    DELETE = "delete"
+    RETENTION_PURGE = "retention_purge"
 
 
 AUTH_COOKIE_NAME = "envex_admin"
+MAX_REQUEST_BYTES = 16 * 1024  # larger request bodies are rejected with 413
 PASSWORD_MIN_LENGTH = 12
 PASSWORD_MAX_BYTES = 72  # bcrypt ignores anything past 72 bytes, so we refuse it instead
 MAX_FAILED_LOGINS = 5

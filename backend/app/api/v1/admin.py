@@ -4,7 +4,7 @@ import uuid
 from datetime import date
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response
 from fastapi.responses import StreamingResponse
 
 from app.api.deps import ClientIpDep, CurrentAdmin, SessionDep, SettingsDep, get_current_admin
@@ -89,6 +89,15 @@ async def update_enquiry(
     return await admin_enquiry_service.update_enquiry(
         session, enquiry_id, payload, admin, ip, settings
     )
+
+
+@router.delete("/enquiries/{enquiry_id}", status_code=204, response_class=Response)
+async def delete_enquiry(
+    enquiry_id: uuid.UUID, admin: CurrentAdmin, session: SessionDep, ip: ClientIpDep
+) -> Response:
+    """Erase an enquiry on the customer's request. Audit-logged without the personal data."""
+    await admin_enquiry_service.delete_enquiry(session, enquiry_id, admin, ip)
+    return Response(status_code=204)
 
 
 @router.post("/enquiries/{enquiry_id}/notes", response_model=EnquiryDetail, status_code=201)

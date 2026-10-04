@@ -233,3 +233,30 @@ async def add_note(
     await session.commit()
     session.expire_all()
     return await get_detail(session, enquiry_id, settings)
+
+
+async def delete_enquiry(
+    session: AsyncSession, enquiry_id: uuid.UUID, admin: AdminUser, ip: str | None
+) -> None:
+    """Erase an enquiry on the customer's request (notes go with it).
+
+    The audit entry keeps only the reference and status, never the personal data, so the
+    deletion itself is accountable without undoing it.
+    """
+    repo = EnquiryRepository(session)
+    enquiry = await repo.get(enquiry_id)
+    if enquiry is None:
+        raise NotFoundError("Enquiry")
+    reference = whatsapp_service.enquiry_reference(enquiry.id)
+    status = enquiry.status.value
+    await repo.delete(enquiry)
+    await AuditRepository(session).add(
+        admin_id=admin.id,
+        action=AuditAction.DELETE,
+        entity_type=ENQUIRY_ENTITY,
+        entity_id=enquiry_id,
+        old_value={"reference": reference, "status": status},
+        ip_address=ip,
+    )
+    await session.commit()
+    logger.info("enquiry_deleted", extra={"enquiry_id": str(enquiry_id), "admin_id": str(admin.id)})

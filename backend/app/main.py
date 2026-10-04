@@ -2,6 +2,7 @@
 
 import logging
 from pathlib import Path
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,15 +12,35 @@ from slowapi.errors import RateLimitExceeded
 
 from app.api.v1 import admin, auth, public
 from app.core.config import Settings, get_settings
+from app.core.constants import MAX_REQUEST_BYTES
 from app.core.errors import register_exception_handlers
 from app.core.logging import configure_logging
-from app.core.middleware import RequestContextMiddleware, SecurityHeadersMiddleware
+from app.core.middleware import (
+    BodySizeLimitMiddleware,
+    RequestContextMiddleware,
+    SecurityHeadersMiddleware,
+)
 from app.core.rate_limit import limiter, rate_limit_exceeded_handler
 
 API_PREFIX = "/api/v1"
 ADMIN_UI_DIR = Path(__file__).resolve().parent / "admin_ui"
 
 logger = logging.getLogger(__name__)
+
+
+def _scrub_event(event: dict[str, Any], _hint: dict[str, Any]) -> dict[str, Any]:
+    """On top of send_default_pii=False: drop anything request- or user-shaped."""
+    request = event.get("request")
+    if isinstance(request, dict):
+        for key in ("data", "cookies", "query_string", "env"):
+            request.pop(key, None)
+        headers = request.get("headers")
+        if isinstance(headers, dict):
+            request["headers"] = {
+                k: v for k, v in headers.items() if k.lower() in {"user-agent", "x-request-id"}
+            }
+    event.pop("user", None)
+    return event
 
 
 def _init_sentry(settings: Settings) -> None:
@@ -30,7 +51,9 @@ def _init_sentry(settings: Settings) -> None:
     sentry_sdk.init(
         dsn=settings.sentry_dsn,
         environment=settings.app_env,
-        send_default_pii=False,  # no IPs, cookies or bodies in error reports
+        send_default_pii=False,  # no IPs, cookies or user data in error reports
+        max_request_body_size="never",  # never attach request bodies (enquiry text)
+        before_send=_scrub_event,
         traces_sample_rate=0.0,
     )
 
@@ -55,6 +78,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)  # type: ignore[arg-type]
 
     # Starlette runs the last-added middleware first, so RequestContext wraps everything.
+    # The size limit sits inside CORS, so a 413 still carries CORS headers for the browser.
+    app.add_middleware(BodySizeLimitMiddleware, max_bytes=MAX_REQUEST_BYTES)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,

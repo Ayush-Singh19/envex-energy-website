@@ -31,10 +31,14 @@ def dummy_hash() -> str:
     return hash_password("timing-equaliser-not-a-real-password")
 
 
-def create_access_token(subject: str, settings: Settings, now: datetime | None = None) -> str:
+def create_access_token(
+    subject: str, token_version: int, settings: Settings, now: datetime | None = None
+) -> str:
+    """Claims: admin id, token version, issued/expiry times. No personal data."""
     issued = now or datetime.now(UTC)
     claims = {
         "sub": subject,
+        "ver": token_version,
         "typ": TOKEN_TYPE,
         "iat": int(issued.timestamp()),
         "exp": issued + timedelta(minutes=settings.access_token_expire_minutes),
@@ -47,8 +51,8 @@ def decode_access_token(token: str, settings: Settings) -> dict[str, Any] | None
         claims = jwt.decode(
             token,
             settings.secret_key.get_secret_value(),
-            algorithms=[JWT_ALGORITHM],
-            options={"require": ["exp", "iat", "sub"]},
+            algorithms=[JWT_ALGORITHM],  # pinned: rejects "alg": "none" and algorithm swaps
+            options={"require": ["exp", "iat", "sub", "ver"]},
         )
     except jwt.PyJWTError:
         return None

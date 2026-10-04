@@ -117,6 +117,10 @@ class EnquiryRepository:
         )
         return (await self.session.execute(stmt)).scalar_one_or_none()
 
+    async def delete(self, enquiry: Enquiry) -> None:
+        await self.session.delete(enquiry)
+        await self.session.flush()
+
     async def add_note(self, note: EnquiryNote) -> EnquiryNote:
         self.session.add(note)
         await self.session.flush()

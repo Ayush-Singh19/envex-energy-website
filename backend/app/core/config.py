@@ -8,7 +8,7 @@ from functools import lru_cache
 from typing import Literal
 from zoneinfo import ZoneInfo
 
-from pydantic import Field, SecretStr, field_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Allowed in development only. 8080 is the port the frontend README serves the site on.
@@ -59,6 +59,10 @@ class Settings(BaseSettings):
     # Proxies in front of the app that append to X-Forwarded-For (1 on Render/Railway).
     trusted_proxy_hops: int = Field(default=0, ge=0, le=5)
 
+    # Retention (security doc): enquiries 24 months after last activity; logs 12 months.
+    retention_enquiry_days: int = Field(default=730, ge=30)
+    retention_log_days: int = Field(default=365, ge=30)
+
     @field_validator("database_url")
     @classmethod
     def _use_asyncpg_driver(cls, v: str) -> str:
@@ -72,6 +76,28 @@ class Settings(BaseSettings):
     @classmethod
     def _strip_trailing_slash(cls, v: str) -> str:
         return v.rstrip("/")
+
+    @model_validator(mode="after")
+    def _production_is_locked_down(self) -> "Settings":
+        if not self.is_production:
+            return self
+        secret = self.secret_key.get_secret_value()
+        if len(secret) < 86 or "change-me" in secret:  # 86 chars = 64 random bytes, base64url
+            raise ValueError(
+                "SECRET_KEY must be 64 random bytes (86+ characters) in production. Generate one "
+                'with: python -c "import secrets; print(secrets.token_urlsafe(64))"'
+            )
+        if not self.frontend_url.startswith("https://"):
+            raise ValueError("FRONTEND_URL must be an https:// address in production.")
+        return self
+
+    @property
+    def call_number_display(self) -> str:
+        """+917055444005 -> "+91 7055 444 005" (Indian numbers); others unchanged."""
+        n = self.call_number
+        if n.startswith("+91") and len(n) == 13:
+            return f"+91 {n[3:7]} {n[7:10]} {n[10:]}"
+        return n
 
     @property
     def tz(self) -> ZoneInfo:

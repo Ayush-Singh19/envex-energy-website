@@ -5,6 +5,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class NoteIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     note: str = Field(max_length=2000)
 
     @field_validator("note")

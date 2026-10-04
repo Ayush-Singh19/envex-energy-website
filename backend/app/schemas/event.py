@@ -6,7 +6,7 @@ from app.core.constants import ClickType
 class ClickEventIn(BaseModel):
     """An anonymous CTA click. Deliberately has no field that could carry personal data."""
 
-    model_config = ConfigDict(str_strip_whitespace=True, extra="ignore")
+    model_config = ConfigDict(str_strip_whitespace=True, extra="forbid")
 
     type: ClickType
     page: str | None = Field(default=None, max_length=300)
