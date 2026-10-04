@@ -166,9 +166,96 @@ const fail = (err) => toast(err instanceof ApiError ? err.message : 'Something w
 
 // ============================================================ contact links
 // Real links: tel: opens the phone's dialler, wa.me opens WhatsApp with a ready message.
+//
+// Call behaves differently by device. On a phone or tablet (touch, no mouse) the tel: link
+// opens the dial pad as normal. On a laptop/desktop, where tel: usually does nothing useful,
+// the click opens a call card instead: the number large and easy to read, plus copy,
+// "call from this computer" and WhatsApp. Detected by input type, not screen width, so a
+// narrow laptop window still gets the card and a phone always gets the dialler.
+const isPhoneLike = () => window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+function onCallClick(l) {
+  return (e) => {
+    if (isPhoneLike()) return; // let tel: open the dial pad
+    e.preventDefault();
+    e.stopPropagation();
+    openCallCard(l, e.currentTarget);
+  };
+}
+
 function callLink(l, cls, withText) {
-  return h('a', { class: cls, href: l.tel_url, title: `Call ${fmtPhone(l.phone)}`, 'aria-label': `Call ${l.name}` },
-    icon('phone'), withText ? 'Call' : null);
+  return h('a', {
+    class: cls, href: l.tel_url, title: `Call ${fmtPhone(l.phone)}`, 'aria-label': `Call ${l.name}`,
+    onclick: onCallClick(l),
+  }, icon('phone'), withText ? 'Call' : null);
+}
+
+let callCardCleanup = null;
+function closeCallCard() {
+  if (callCardCleanup) callCardCleanup();
+}
+
+function openCallCard(l, anchor) {
+  closeCallCard();
+  const copyBtn = h('button', { class: 'btn btn-sm', type: 'button' }, 'Copy number');
+  copyBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(l.phone);
+      copyBtn.textContent = 'Copied';
+      toast(`${fmtPhone(l.phone)} copied.`);
+    } catch {
+      toast('Couldn’t copy. Select the number and copy it instead.');
+    }
+  });
+  const card = h('div', { class: 'call-card', role: 'dialog', 'aria-modal': 'false', 'aria-label': `Call ${l.name}` },
+    h('div', { class: 'call-card-head' },
+      h('span', { class: 'call-card-icon' }, icon('phone')),
+      h('div', null,
+        h('div', { class: 'call-card-name' }, l.name),
+        h('div', { class: 'call-card-sub' }, `${project(l)} · ${l.reference}`),
+      ),
+      h('button', { class: 'call-card-close', type: 'button', 'aria-label': 'Close' }, icon('x')),
+    ),
+    h('a', { class: 'call-card-number', href: l.tel_url, title: 'Call from this computer' }, fmtPhone(l.phone)),
+    h('p', { class: 'call-card-hint' }, 'Dial this from your phone, or call from this computer if it has a calling app.'),
+    h('div', { class: 'call-card-actions' },
+      copyBtn,
+      h('a', { class: 'btn btn-sm btn-primary', href: l.tel_url }, icon('phone'), 'Call from this computer'),
+      h('a', { class: 'btn btn-sm btn-wa', href: l.whatsapp_url, target: '_blank', rel: 'noopener noreferrer' }, icon('wa'), 'WhatsApp'),
+    ),
+  );
+  document.body.append(card);
+
+  // Sit just below the button (or above it near the bottom), kept inside the window.
+  const r = anchor.getBoundingClientRect();
+  const w = card.offsetWidth, ht = card.offsetHeight, pad = 12;
+  const left = Math.min(Math.max(pad, r.right - w), window.innerWidth - w - pad);
+  const below = r.bottom + 10;
+  const top = below + ht + pad <= window.innerHeight ? below : Math.max(pad, r.top - ht - 10);
+  card.style.left = `${Math.round(left)}px`;
+  card.style.top = `${Math.round(top)}px`;
+
+  const onDocClick = (e) => { if (!card.contains(e.target)) closeCallCard(); };
+  const onKey = (e) => { if (e.key === 'Escape') { e.stopImmediatePropagation(); closeCallCard(); anchor.focus(); } };
+  const onScroll = () => closeCallCard();
+  callCardCleanup = () => {
+    card.remove();
+    document.removeEventListener('click', onDocClick, true);
+    document.removeEventListener('keydown', onKey, true);
+    window.removeEventListener('resize', onScroll);
+    document.removeEventListener('scroll', onScroll, true);
+    callCardCleanup = null;
+  };
+  card.querySelector('.call-card-close').addEventListener('click', () => { closeCallCard(); anchor.focus(); });
+  // Registered on the next tick so the click that opened the card doesn't close it.
+  setTimeout(() => {
+    if (!card.isConnected) return;
+    document.addEventListener('click', onDocClick, true);
+    document.addEventListener('keydown', onKey, true);
+    window.addEventListener('resize', onScroll);
+    document.addEventListener('scroll', onScroll, true);
+  });
+  card.querySelector('.call-card-number').focus({ preventScroll: true });
 }
 function waLink(l, cls, withText) {
   return h('a', { class: cls, href: l.whatsapp_url, target: '_blank', rel: 'noopener noreferrer', title: 'WhatsApp with a ready message', 'aria-label': `WhatsApp ${l.name}` },
@@ -658,7 +745,7 @@ function drawer() {
         h('div', { class: 'box' },
           h('h3', null, 'Details'),
           h('dl', { class: 'facts' },
-            h('dt', null, 'Phone'), h('dd', null, h('a', { href: l.tel_url }, fmtPhone(l.phone))),
+            h('dt', null, 'Phone'), h('dd', null, h('a', { href: l.tel_url, onclick: onCallClick(l) }, fmtPhone(l.phone))),
             h('dt', null, 'Email'), h('dd', null, h('a', { href: l.mailto_url }, l.email)),
             h('dt', null, 'Location'), h('dd', null, l.location),
             h('dt', null, 'Project'), h('dd', null, l.project_type),
