@@ -1,0 +1,11 @@
+# Secret-scanning config (gitleaks). Default rules, plus one narrow exception:
+# the fixed dummy keys the test suite and CI use for throwaway tokens. Never used elsewhere.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Test-only fixture values"
+regexes = [
+  '''test-secret-key-that-is-long-enough-for-hs256-signing''',
+  '''ci-only-key-not-a-secret-but-long-enough-for-settings-validation''',
+]

@@ -1,0 +1,36 @@
+# Local development: API + PostgreSQL 16.
+#   cp .env.example .env   (then set SECRET_KEY)
+#   docker compose up --build
+# The dev password below is a local-only placeholder, not a real secret.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: envex
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-envex}
+      POSTGRES_DB: envex
+    ports:
+      # Override if 5432 is taken (e.g. a native Postgres install): POSTGRES_PORT=5434
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U envex -d envex"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://envex:${POSTGRES_PASSWORD:-envex}@db:5432/envex
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
