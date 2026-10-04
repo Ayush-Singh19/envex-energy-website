@@ -3085,8 +3085,8 @@
           <p style="margin: 0 0 12px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: #5d7590;">Looking for something specific?</p>
           <div style="display: flex; flex-wrap: wrap; gap: 8px 18px;">
             <a href="#/services" onClick="{{ onServices }}" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 600; color: #0b4f9c;">Solar EPC &amp; execution</a>
-            <a href="#consultancy" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 600; color: #0b4f9c;">Consultancy &amp; approvals</a>
-            <a href="#maintenance" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 600; color: #0b4f9c;">Service &amp; maintenance</a>
+            <a href="#/services" onClick="{{ goConsultancyCaps }}" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 600; color: #0b4f9c;">Consultancy &amp; approvals</a>
+            <a href="#/services" onClick="{{ goMaintenanceCaps }}" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 600; color: #0b4f9c;">Service &amp; maintenance</a>
             <a href="#/solutions" onClick="{{ goSolutions }}" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 600; color: #0b4f9c;">Solar solutions</a>
           </div>
         </div>
@@ -5027,6 +5027,11 @@ class Component extends DCLogic {
         };
       }),
       goServicesCore: this._goRoute('#/services', 'services-core'),
+      // Contact page 'Looking for something specific?' links: land on the matching
+      // capability section of the Services page (the old #consultancy / #maintenance
+      // anchors stopped existing when the site became multi-page).
+      goConsultancyCaps: this._goRoute('#/services', 'consultancy-capabilities'),
+      goMaintenanceCaps: this._goRoute('#/services', 'maintenance-capabilities'),
       form: this.state.form,
       errors: this.state.errors,
       sent: this.state.sent,
