@@ -1684,6 +1684,42 @@
     [data-step] [data-step-tick] { opacity: 1 !important; }
     [data-step]::before { transform: none !important; }
   }
+
+  /* Enquiry form: honeypot field. Off-screen rather than display:none, which some bots
+     skip. Real visitors never see or tab into it. */
+  [data-hp] { position: absolute !important; left: -10000px !important; top: auto !important; width: 1px; height: 1px; overflow: hidden; }
+  [data-connect-btn][disabled] { cursor: progress; animation: none; transform: none; box-shadow: none; background: #f5b942; }
+
+  /* Quick contact: each number is its own tap target. */
+  [data-quick-call] { display: block; text-decoration: none; border-radius: 4px; }
+  [data-quick-call]:hover span { color: #0b4f9c !important; text-decoration: underline; text-underline-offset: 3px; } /* beats the inline colour */
+
+  /* Floating WhatsApp button. #1a8d4c keeps white text above 4.5:1 contrast. */
+  [data-float-wa] {
+    position: fixed; z-index: 50;
+    right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom));
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 20px 12px 14px; border-radius: 999px;
+    background: #1a8d4c; color: #ffffff; text-decoration: none;
+    font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 700;
+    box-shadow: 0 12px 28px -10px rgba(5, 38, 74, .55), 0 2px 6px rgba(5, 38, 74, .2);
+    transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  [data-float-wa]:hover { background: #157a41; transform: translateY(-2px); box-shadow: 0 16px 32px -12px rgba(5, 38, 74, .6), 0 2px 6px rgba(5, 38, 74, .2); }
+  [data-float-wa]:focus-visible { outline: 3px solid #ffb84d; outline-offset: 3px; }
+  [data-float-wa] svg { width: 26px; height: 26px; flex: 0 0 auto; }
+  @media (max-width: 640px) {
+    [data-float-wa] { padding: 15px; }
+    [data-float-wa-label] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    [data-float-wa] { animation: envexWaIn .5s cubic-bezier(.22,.68,.3,1) .9s both; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-float-wa], [data-float-wa]:hover { transition: none; transform: none; }
+  }
+  @keyframes envexWaIn { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
+  @media print { [data-float-wa] { display: none; } }
 </style>
 </helmet>
 <div data-route-fade="" style="font-family: Helvetica Neue, Helvetica, Arial, sans-serif; line-height: 1.5; overflow-x: clip; background: #f1f6fb;">
@@ -1707,7 +1743,7 @@
             </div>
           </sc-for>
         </nav>
-        <a href="#/contact" onClick="{{ onQuote }}" data-nav-cta="" tabindex="{{ navCtaTab }}" aria-hidden="{{ navCtaAria }}" style="{{ navCtaStyle }}">Discuss your project <span data-arrow="" aria-hidden="true">&#8594;</span></a>
+        <a href="#/contact" onClick="{{ onQuote }}" data-track="quote" data-nav-cta="" tabindex="{{ navCtaTab }}" aria-hidden="{{ navCtaAria }}" style="{{ navCtaStyle }}">Discuss your project <span data-arrow="" aria-hidden="true">&#8594;</span></a>
       </sc-if>
 
       <sc-if value="{{ isNarrow }}" hint-placeholder-val="{{ false }}">
@@ -1724,7 +1760,7 @@
           </a>
         </sc-for>
         <a href="tel:+917055444005" onClick="{{ closeMenu }}" style="padding: 18px 0 6px; color: rgba(255,255,255,.85); font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 16px;">+91 7055 444 005</a>
-        <a href="#/contact" onClick="{{ onQuoteMobile }}" style="display: inline-flex; align-items: center; justify-content: center; margin-top: 10px; padding: 15px 22px; border-radius: 10px; background: #ffb84d; color: #05264a; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: .03em;">Discuss your project</a>
+        <a href="#/contact" onClick="{{ onQuoteMobile }}" data-track="quote" style="display: inline-flex; align-items: center; justify-content: center; margin-top: 10px; padding: 15px 22px; border-radius: 10px; background: #ffb84d; color: #05264a; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: .03em;">Discuss your project</a>
       </div>
     </sc-if>
   </div>
@@ -1930,7 +1966,7 @@
         <h2 style="margin: 0; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(22px, 2.5vw, 31px); line-height: 1.14; font-weight: 600; letter-spacing: -.022em; color: #082846; text-wrap: pretty;">Let's understand your project.</h2>
         <p style="margin: 9px 0 0; max-width: 56ch; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.8px; line-height: 1.6; color: #64768A; text-wrap: pretty;">Where the project is, what it needs to power, and any constraints you already know.</p>
       </div>
-      <a href="#/contact" onClick="{{ onQuote }}" data-cta-btn="" data-primary-cta="" data-arrow-link="" style="justify-self: start; display: inline-flex; align-items: center; gap: 10px; padding: 13px 24px; border-radius: 10px; background: #F5B84B; color: #082846; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 700; white-space: nowrap;">Discuss your project <span data-arrow="" aria-hidden="true">&#8594;</span></a>
+      <a href="#/contact" onClick="{{ onQuote }}" data-track="quote" data-cta-btn="" data-primary-cta="" data-arrow-link="" style="justify-self: start; display: inline-flex; align-items: center; gap: 10px; padding: 13px 24px; border-radius: 10px; background: #F5B84B; color: #082846; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 700; white-space: nowrap;">Discuss your project <span data-arrow="" aria-hidden="true">&#8594;</span></a>
     </div>
   </section>
 
@@ -2323,7 +2359,7 @@
         <p data-why-cta-b="">Tell us about your roof, load and project requirements.</p>
       </div>
       <div data-why-cta-act="">
-        <button type="button" onClick="{{ goQuote }}" data-why-cta-btn="" data-primary-cta="">Discuss a project <span data-why-cta-a="" aria-hidden="true">&#8594;</span></button>
+        <button type="button" onClick="{{ goQuote }}" data-track="quote" data-why-cta-btn="" data-primary-cta="">Discuss a project <span data-why-cta-a="" aria-hidden="true">&#8594;</span></button>
         <a href="#/solutions" onClick="{{ goSolutions }}" data-why-cta-link="">Explore our solutions <span aria-hidden="true">&#8594;</span></a>
       </div>
     </div>
@@ -2439,7 +2475,7 @@
           </ul>
 
           <div data-reveal="" style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; opacity: 0; transform: translateY(26px); transition: opacity .64s cubic-bezier(.22,.68,.3,1) 240ms, transform .64s cubic-bezier(.22,.68,.3,1) 240ms;">
-            <button type="button" onClick="{{ goQuote }}" data-connect-btn="" data-primary-cta="" style="padding: 15px 30px; border: 0; border-radius: 8px; background: #f5b942; color: #082b4c; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; font-weight: 600; letter-spacing: -.004em; cursor: pointer;">Discuss your project</button>
+            <button type="button" onClick="{{ goQuote }}" data-track="quote" data-connect-btn="" data-primary-cta="" style="padding: 15px 30px; border: 0; border-radius: 8px; background: #f5b942; color: #082b4c; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; font-weight: 600; letter-spacing: -.004em; cursor: pointer;">Discuss your project</button>
             <button type="button" onClick="{{ goServicesCore }}" data-svc-link="" style="padding: 0; border: 0; background: none; cursor: pointer; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 600; color: rgba(255,255,255,.84); text-decoration: underline; text-underline-offset: 5px;">Explore our services</button>
           </div>
         </div>
@@ -2554,7 +2590,7 @@
         <div style="margin-top: clamp(26px, 3vw, 40px); padding: 20px 22px; border-left: 2px solid #8fd14f; background: #f7fafd;">
           <p style="margin: 0 0 6px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 700; color: #0c1f33;">Not sure which of these you need?</p>
           <p style="margin: 0 0 14px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; line-height: 1.6; color: #5a7089; text-wrap: pretty;">Most projects start with a site survey and a conversation about what the roof can support.</p>
-          <a href="#/contact" onClick="{{ onQuote }}" data-svc-link="" style="display: inline-flex; align-items: center; gap: 8px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 700; color: #0b4f9c;">Talk to our team <span aria-hidden="true">&#8594;</span></a>
+          <a href="#/contact" onClick="{{ onQuote }}" data-track="quote" data-svc-link="" style="display: inline-flex; align-items: center; gap: 8px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 700; color: #0b4f9c;">Talk to our team <span aria-hidden="true">&#8594;</span></a>
         </div>
       </div>
       <div data-reveal="" style="border-top: 1px solid #e2e9f0; opacity: 0; transform: translateY(22px); transition: opacity .6s cubic-bezier(.22,1,.36,1), transform .6s cubic-bezier(.22,1,.36,1); transition-delay: 80ms;">
@@ -2620,7 +2656,7 @@
         <h2 data-faq-h="">Common questions, answered plainly.</h2>
         <p data-faq-sub="">What we execute, what we can take on as consultancy alone, and where approval support is available.</p>
         <p data-faq-note="">Some projects depend on site conditions, approvals and system requirements. If your question is specific to your project, our team can help.</p>
-        <a href="#/contact" onClick="{{ onQuote }}" data-faq-link="">Talk to Envex <span data-faq-link-a="" aria-hidden="true">&#8594;</span></a>
+        <a href="#/contact" onClick="{{ onQuote }}" data-track="quote" data-faq-link="">Talk to Envex <span data-faq-link-a="" aria-hidden="true">&#8594;</span></a>
       </div>
 
       <div data-faq-list="" data-reveal="" style="opacity: 0; transform: translateY(20px); transition: opacity .7s cubic-bezier(.22,1,.36,1) 90ms, transform .7s cubic-bezier(.22,1,.36,1) 90ms;">
@@ -3010,7 +3046,7 @@
         <p data-reveal="" style="margin: 0 0 12px; max-width: 52ch; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: clamp(16px, 1.5vw, 17.5px); line-height: 1.62; color: rgba(255,255,255,.82); text-wrap: pretty; opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1) 130ms, transform .75s cubic-bezier(.22,.68,.3,1) 130ms;">Tell us what you're planning — a new rooftop system, a commercial or industrial project, a system design requirement, approval support or ongoing maintenance.</p>
         <p data-reveal="" style="margin: 0 0 clamp(26px, 3vw, 34px); max-width: 52ch; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.62; color: rgba(255,255,255,.66); text-wrap: pretty; opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1) 170ms, transform .75s cubic-bezier(.22,.68,.3,1) 170ms;">We'll use what you send to understand the requirement and work out the appropriate next step.</p>
         <div data-reveal="" style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1) 220ms, transform .75s cubic-bezier(.22,.68,.3,1) 220ms;">
-          <a href="#/contact" onClick="{{ onQuote }}" data-connect-btn="" data-primary-cta="" style="display: inline-flex; align-items: center; padding: 15px 30px; border-radius: 8px; background: #f5b942; color: #082b4c; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; font-weight: 600;">Start an enquiry</a>
+          <a href="#/contact" onClick="{{ onQuote }}" data-track="quote" data-connect-btn="" data-primary-cta="" style="display: inline-flex; align-items: center; padding: 15px 30px; border-radius: 8px; background: #f5b942; color: #082b4c; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; font-weight: 600;">Start an enquiry</a>
           <a href="tel:+917055444005" data-svc-link="" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14.5px; font-weight: 600; color: rgba(255,255,255,.84); text-decoration: underline; text-underline-offset: 5px;">Call our team</a>
         </div>
       </div>
@@ -3019,11 +3055,11 @@
 
   <section data-screen-label="Quick contact" style="box-sizing: border-box; padding: clamp(36px, 4.5vw, 58px) clamp(20px, 6vw, 80px); border-bottom: 1px solid #e8eef4;">
     <div data-quick-grid="" data-reveal="" style="max-width: 1200px; margin: 0 auto; display: grid; gap: clamp(18px, 2.4vw, 34px); opacity: 0; transform: translateY(26px); transition: opacity .75s cubic-bezier(.22,.68,.3,1), transform .75s cubic-bezier(.22,.68,.3,1);">
-      <a href="tel:+917055444005" data-quick-item="" style="display: block; padding-top: 15px; border-top: 2px solid #0b4f9c; text-decoration: none;">
+      <div data-quick-item="" style="display: block; padding-top: 15px; border-top: 2px solid #0b4f9c;">
         <p style="margin: 0 0 8px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: #0b4f9c;">Call</p>
-        <p style="margin: 0 0 3px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 17px; font-weight: 600; color: #0c1f33;">+91 7055 444 005</p>
-        <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; color: #5a7089;">+91 7055 444 002</p>
-      </a>
+        <a href="tel:+917055444005" data-quick-call="" aria-label="Call +91 7055 444 005" style="margin: 0 0 3px;"><span style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 17px; font-weight: 600; color: #0c1f33;">+91 7055 444 005</span></a>
+        <a href="tel:+917055444002" data-quick-call="" aria-label="Call +91 7055 444 002"><span style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; color: #5a7089;">+91 7055 444 002</span></a>
+      </div>
       <a href="mailto:envexenergy@gmail.com" data-quick-item="" style="display: block; padding-top: 15px; border-top: 2px solid #f5b942; text-decoration: none;">
         <p style="margin: 0 0 8px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: #8a5806;">Email</p>
         <p style="margin: 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 17px; font-weight: 600; color: #0c1f33; word-break: break-word;">envexenergy@gmail.com</p>
@@ -3062,6 +3098,10 @@
             <h3 style="margin: 0 0 9px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(20px, 2vw, 25px); line-height: 1.2; font-weight: 600; letter-spacing: -.02em; color: #0c1f33;">Tell us about your requirement.</h3>
             <p style="margin: 0 0 clamp(22px, 2.6vw, 28px); max-width: 46ch; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #5a7089; text-wrap: pretty;">A few details help us understand the type of solar project or service you're looking for.</p>
             <form onSubmit="{{ onSubmitEnquiry }}" novalidate="novalidate">
+              <div data-hp="" aria-hidden="true">
+                <label for="website">Website</label>
+                <input id="website" name="website" type="text" value="{{ websiteValue }}" onChange="{{ onWebsite }}" sc-camel-tab-index="-1" sc-camel-auto-complete="off">
+              </div>
               <div data-form-grid="" style="display: grid; gap: 15px 18px;">
                 <sc-for list="{{ fields }}" as="f" hint-placeholder-count="6">
                   <div>
@@ -3083,18 +3123,34 @@
                 <div data-form-wide="">
                   <label for="message" style="display: block; margin-bottom: 6px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; font-size: 11px; color: #41586f;">Message / project requirements</label>
                   <textarea id="message" name="message" rows="4" placeholder="Roof type, available area, current electricity bill, timelines — whatever you already know." value="{{ messageValue }}" onChange="{{ onMessage }}" data-field="" style="width: 100%; box-sizing: border-box; padding: 13px 15px; border-radius: 8px; border: 1px solid #d6e0ea; background: #ffffff; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; line-height: 1.55; color: #0c1f33; resize: vertical;"></textarea>
+                  <sc-if value="{{ hasMessageError }}" hint-placeholder-val="{{ false }}"><p style="margin: 6px 0 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13px; color: #c0442f;">{{ messageError }}</p></sc-if>
+                </div>
+                <div data-form-wide="">
+                  <label for="consent" style="display: flex; align-items: flex-start; gap: 11px; cursor: pointer; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.55; color: #41586f;">
+                    <input id="consent" name="consent" type="checkbox" checked="{{ consentChecked }}" onChange="{{ onConsent }}" style="flex: 0 0 auto; width: 18px; height: 18px; margin: 2px 0 0; accent-color: #3b7d1d; cursor: pointer;">
+                    <span>I agree to Envex Energy contacting me by phone, WhatsApp or email about this enquiry. *</span>
+                  </label>
+                  <sc-if value="{{ hasConsentError }}" hint-placeholder-val="{{ false }}"><p style="margin: 6px 0 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13px; color: #c0442f;">{{ consentError }}</p></sc-if>
                 </div>
               </div>
-              <button type="submit" data-connect-btn="" data-primary-cta="" style="margin-top: clamp(20px, 2.4vw, 26px); padding: 15px 30px; border: 0; border-radius: 8px; background: #f5b942; color: #082b4c; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; font-weight: 600; cursor: pointer;">Send enquiry</button>
+              <button type="submit" data-connect-btn="" data-primary-cta="" disabled="{{ sending }}" aria-busy="{{ sendingAria }}" style="{{ submitStyle }}">{{ submitLabel }}</button>
+              <p style="margin: 14px 0 0; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 1.55; color: #6b7f93;">We save your enquiry, then open WhatsApp so you can message our team directly. Your details are only used to respond to this enquiry.</p>
             </form>
           </div>
         </sc-if>
         <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
-          <div style="padding: clamp(12px, 2vw, 22px) 0;">
-            <p style="margin: 0 0 12px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: #2f5d1c;">Enquiry ready</p>
-            <h3 style="margin: 0 0 12px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(20px, 2vw, 25px); line-height: 1.2; font-weight: 600; letter-spacing: -.02em; color: #0c1f33;">Your enquiry has been prepared in your email app.</h3>
-            <p style="margin: 0 0 20px; max-width: 46ch; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.62; color: #5a7089; text-wrap: pretty;">Send it and our team can review the details and follow up on the requirement. If your email app didn't open, write to us directly.</p>
-            <a href="mailto:envexenergy@gmail.com" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; font-weight: 600; color: #0b4f9c;">envexenergy@gmail.com</a>
+          <div role="status" aria-live="polite" style="padding: clamp(12px, 2vw, 22px) 0;">
+            <p style="margin: 0 0 12px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: #2f5d1c;">{{ sentEyebrow }}</p>
+            <h3 style="margin: 0 0 12px; font-family: 'Clash Display', 'General Sans', Helvetica, Arial, sans-serif; font-size: clamp(20px, 2vw, 25px); line-height: 1.2; font-weight: 600; letter-spacing: -.02em; color: #0c1f33;">Opening WhatsApp…</h3>
+            <p style="margin: 0 0 14px; max-width: 46ch; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.62; color: #5a7089; text-wrap: pretty;">{{ sentBody }}</p>
+            <sc-if value="{{ hasSentRef }}" hint-placeholder-val="{{ false }}">
+              <p style="margin: 0 0 20px; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14px; color: #41586f;">Your reference: <strong style="font-weight: 700; letter-spacing: .04em; color: #0c1f33;">{{ sentRef }}</strong></p>
+            </sc-if>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px;">
+              <a href="{{ waUrl }}" target="_blank" rel="noopener" data-connect-btn="" style="display: inline-flex; align-items: center; padding: 14px 26px; border-radius: 8px; background: #f5b942; color: #082b4c; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; font-weight: 600; text-decoration: none;">WhatsApp didn't open? Tap here</a>
+              <a href="tel:+917055444005" style="font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 600; color: #0b4f9c;">Or call +91 7055 444 005</a>
+            </div>
+            <button type="button" onClick="{{ resetEnquiry }}" style="margin-top: 22px; padding: 0; border: 0; background: none; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 600; color: #5a7089; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;">Send another enquiry</button>
           </div>
         </sc-if>
       </div>
@@ -3146,7 +3202,7 @@
         <h2 data-cl-h="">Tell us what you're planning.</h2>
         <p data-cl-sub="">A rooftop installation, a commercial or industrial project, consultancy, approvals or ongoing service &#8212; tell us the requirement and we will work out the right next step.</p>
         <div data-cl-act="">
-          <a href="#/contact" onClick="{{ onQuote }}" data-cl-primary="" data-primary-cta="">Start an enquiry <span data-cl-arrow="" aria-hidden="true">&#8594;</span></a>
+          <a href="#/contact" onClick="{{ onQuote }}" data-track="quote" data-cl-primary="" data-primary-cta="">Start an enquiry <span data-cl-arrow="" aria-hidden="true">&#8594;</span></a>
           <a href="tel:+917055444005" data-cl-secondary="">Call the team <span data-cl-arrow="" aria-hidden="true">&#8594;</span></a>
         </div>
       </div>
@@ -3232,7 +3288,7 @@
           </div>
           <div data-foot-col="">
             <p data-foot-h="">Contact</p>
-            <a href="#/contact" onClick="{{ onQuote }}" data-foot-link="">Start an enquiry</a>
+            <a href="#/contact" onClick="{{ onQuote }}" data-track="quote" data-foot-link="">Start an enquiry</a>
             <a href="#/contact" onClick="{{ onContact }}" data-foot-link="">Contact &amp; location</a>
           </div>
         </nav>
@@ -3269,6 +3325,13 @@
   </sc-if>
   </div>
 
+  <sc-if value="{{ showFloatWa }}" hint-placeholder-val="{{ true }}">
+    <a href="{{ floatWaHref }}" target="_blank" rel="noopener" data-float-wa="" aria-label="Chat with Envex Energy on WhatsApp">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.98L2 22l5.16-1.5A9.9 9.9 0 1 0 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.06.89.9-2.98-.2-.31a8.2 8.2 0 1 1 6.84 3.73zm4.5-6.14c-.25-.12-1.46-.72-1.69-.8-.23-.08-.39-.12-.55.12-.16.25-.63.8-.78.97-.14.16-.29.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.41-.55-.42h-.47a.9.9 0 0 0-.65.3c-.22.25-.86.84-.86 2.05s.88 2.38 1 2.54c.12.17 1.73 2.64 4.2 3.7.59.25 1.05.4 1.4.52.59.19 1.13.16 1.55.1.47-.07 1.46-.6 1.66-1.18.21-.58.21-1.07.15-1.18-.06-.1-.22-.16-.47-.28z"></path></svg>
+      <span data-float-wa-label="">WhatsApp us</span>
+    </a>
+  </sc-if>
+
   <sc-if value="{{ detailOpen }}" hint-placeholder-val="{{ false }}">
     <div data-detail-scroll="" style="position: fixed; inset: 0; z-index: 40; overflow-y: auto; overflow-anchor: none; -webkit-overflow-scrolling: touch; background: #f7f8f6; animation: envexRise .5s cubic-bezier(.22,.68,.3,1) both;">
 
@@ -3297,7 +3360,7 @@
           </div>
 
           <div data-dhero-cta="">
-            <button type="button" onClick="{{ goQuote }}" data-dhero-btn="" data-primary-cta="">Discuss your project <span data-dhero-arrow="" aria-hidden="true">&#8594;</span></button>
+            <button type="button" onClick="{{ goQuote }}" data-track="quote" data-dhero-btn="" data-primary-cta="">Discuss your project <span data-dhero-arrow="" aria-hidden="true">&#8594;</span></button>
           </div>
         </div>
       </header>
@@ -3489,13 +3552,25 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{}">
 class Component extends DCLogic {
+  // ============================== SITE CONFIG ==============================
+  // API_BASE: where the Envex backend runs, with no trailing slash.
+  //   Local development: 'http://localhost:8000' (serve this page from http://localhost:5500).
+  //   Before publishing: change to the deployed API, e.g. 'https://envex-api.onrender.com'.
+  // If the API can't be reached, the form still opens WhatsApp, so no lead is lost.
+  static API_BASE = 'http://localhost:8000';
+  // Company WhatsApp number in wa.me format: country code + number, digits only.
+  static WHATSAPP_NUMBER = '917055444005';
+  // =========================================================================
+
   state = { w: typeof window !== 'undefined' ? window.innerWidth : 1200, menuOpen: false, drop: -1, acc: -1, scrolled: false, coreOpen: false, handleOpen: 0, faqOpen: -1,
     route: Component.parseHash().route, detail: Component.parseHash().detail, stage: 0, pstage: 0, pprev: -1, jstage: 0, sstage: 0, sprev: -1, navCtaOff: false,
-    form: { name: '', company: '', phone: '', email: '', location: '', ptype: '', size: '', message: '' },
-    errors: {}, sent: false,
+    form: Component.EMPTY_FORM,
+    errors: {}, sent: false, sending: false, waUrl: '', sentRef: '', sentSaved: false,
     capTab: 0, bStep: 0, bSent: false, bErr: {},
     brief: { role: '', ptype: '', needs: [], company: '', person: '', email: '', phone: '',
              location: '', capacity: '', sites: '', notes: '', files: [] } };
+
+  static EMPTY_FORM = { name: '', company: '', phone: '', email: '', location: '', ptype: '', size: '', message: '', consent: false, website: '' };
 
   _setField(k, v) { this.setState(s => ({ form: Object.assign({}, s.form, { [k]: v }), errors: Object.assign({}, s.errors, { [k]: '' }) })); }
 
@@ -3586,20 +3661,125 @@ class Component extends DCLogic {
     this.setState({ bSent: true });
   }
 
-  _submitEnquiry(e) {
+  // Validate in the browser (same rules as the API), save the enquiry, then open WhatsApp
+  // with the link the API built. Any failure to reach the API falls back to a WhatsApp link
+  // built here, so a visitor is never stuck with an unsent enquiry.
+  async _submitEnquiry(e) {
     e.preventDefault();
+    if (this.state.sending) return;
     const f = this.state.form, errors = {};
     if (!f.name.trim()) errors.name = 'Please enter your name.';
     if (!/^[0-9+\-\s()]{7,}$/.test(f.phone.trim())) errors.phone = 'Please enter a phone number we can reach you on.';
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.trim())) errors.email = 'Please enter a valid email address.';
     if (!f.location.trim()) errors.location = 'Please tell us where the project is.';
     if (!f.ptype) errors.ptype = 'Please choose the type of project.';
+    if (!f.consent) errors.consent = 'Please agree to be contacted about your enquiry.';
     if (Object.keys(errors).length) { this.setState({ errors: errors }); return; }
-    const body = ['Name: ' + f.name, f.company ? 'Company: ' + f.company : '', 'Phone: ' + f.phone, 'Email: ' + f.email,
-      'Project location: ' + f.location, 'Project type: ' + f.ptype, f.size ? 'Approximate system size: ' + f.size : '',
-      '', f.message].filter(Boolean).join('\n');
-    window.location.href = 'mailto:envexenergy@gmail.com?subject=' + encodeURIComponent('Solar project enquiry — ' + f.ptype) + '&body=' + encodeURIComponent(body);
-    this.setState({ sent: true });
+
+    this.setState({ sending: true, errors: {} });
+    const clip = (v, n) => (v || '').trim().slice(0, n);
+    const payload = {
+      name: clip(f.name, 120), company: clip(f.company, 160), phone: clip(f.phone, 30),
+      email: clip(f.email, 254), location: clip(f.location, 160), project_type: f.ptype,
+      system_size: clip(f.size, 60), message: clip(f.message, 4000), consent: true,
+      website: f.website,
+      source_page: clip(this._pagePath(), 300),
+      utm_source: this._utm('utm_source'), utm_medium: this._utm('utm_medium'), utm_campaign: this._utm('utm_campaign')
+    };
+
+    let res = null, data = null;
+    try {
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timer = ctrl ? setTimeout(() => ctrl.abort(), 15000) : 0;
+      res = await fetch(Component.API_BASE + '/api/v1/enquiries', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload), signal: ctrl ? ctrl.signal : undefined
+      });
+      clearTimeout(timer);
+      data = await res.json().catch(() => null);
+    } catch (err) {
+      res = null; // offline, API down, blocked or timed out
+    }
+
+    const url = data && typeof data.whatsapp_url === 'string' ? data.whatsapp_url : '';
+    if (res && res.status === 201 && url.indexOf('https://wa.me/') === 0) {
+      this._openWhatsApp(url, true, data.id);
+      return;
+    }
+    if (res && res.status === 422 && data && data.error && data.error.fields) {
+      // Show the API's message under the matching field (its names differ for two fields).
+      const rename = { project_type: 'ptype', system_size: 'size' };
+      const fieldErrors = {};
+      Object.keys(data.error.fields).forEach(k => { fieldErrors[rename[k] || k] = data.error.fields[k]; });
+      this.setState({ sending: false, errors: fieldErrors });
+      return;
+    }
+    // Unreachable, rate-limited or server error: never lose the lead.
+    this._openWhatsApp(this._fallbackWhatsApp(f), false, null);
+  }
+
+  _openWhatsApp(url, saved, id) {
+    const ref = id ? 'ENV-' + String(id).replace(/-/g, '').slice(0, 4).toUpperCase() : '';
+    this.setState({ sending: false, sent: true, waUrl: url, sentSaved: saved, sentRef: ref }, () => {
+      // Same-tab navigation: window.open() after an await is stopped by pop-up blockers.
+      // The short pause lets the confirmation render first; it stays as the fallback link.
+      clearTimeout(this._waTimer);
+      this._waTimer = setTimeout(() => { window.location.href = url; }, 700);
+    });
+  }
+
+  _waLink(message) {
+    return 'https://wa.me/' + Component.WHATSAPP_NUMBER + '?text=' + encodeURIComponent(message);
+  }
+
+  // Used only when the API can't be reached: carries the full details, since nothing was saved.
+  _fallbackWhatsApp(f) {
+    const t = (v) => (v || '').trim();
+    return this._waLink([
+      'Hello Envex Energy, I would like a quote for a solar project.',
+      'Name: ' + t(f.name),
+      t(f.company) ? 'Company: ' + t(f.company) : '',
+      'Phone: ' + t(f.phone),
+      'Email: ' + t(f.email),
+      'Project: ' + f.ptype + (t(f.size) ? ' (' + t(f.size) + ')' : ''),
+      'Location: ' + t(f.location),
+      t(f.message) ? 'Message: ' + t(f.message).slice(0, 600) : ''
+    ].filter(Boolean).join('\n'));
+  }
+
+  // Readable path for the admin ("/Envex Energy Landing.dc.html", not "%20").
+  _pagePath() {
+    try { return decodeURIComponent(window.location.pathname); } catch (e) { return window.location.pathname; }
+  }
+
+  _utm(name) {
+    try {
+      const v = new URLSearchParams(window.location.search).get(name);
+      return v ? v.slice(0, 100) : undefined;
+    } catch (e) { return undefined; }
+  }
+
+  // Anonymous click counter for Call / WhatsApp / Quote / Email taps. sendBeacon with a
+  // string body goes out as text/plain, which needs no CORS preflight and survives the
+  // page unloading (tel: and wa.me links often navigate away immediately).
+  _track(type) {
+    try {
+      const url = Component.API_BASE + '/api/v1/events';
+      const body = JSON.stringify({ type: type, page: this._pagePath().slice(0, 300), utm_source: this._utm('utm_source') });
+      if (navigator.sendBeacon && navigator.sendBeacon(url, body)) return;
+      fetch(url, { method: 'POST', body: body, keepalive: true, mode: 'no-cors' }).catch(() => {});
+    } catch (e) { /* tracking must never break a click */ }
+  }
+
+  _trackType(el) {
+    const tagged = el.getAttribute('data-track');
+    if (tagged) return tagged;
+    const href = el.getAttribute('href') || '';
+    if (href.indexOf('tel:') === 0) return 'call';
+    if (href.indexOf('https://wa.me/') === 0) return 'whatsapp';
+    if (href.indexOf('mailto:') === 0) return 'email';
+    if (href === '#enquiry') return 'quote';
+    return '';
   }
 
 
@@ -4343,6 +4523,14 @@ class Component extends DCLogic {
   ];
 
   componentDidMount() {
+    // One delegated listener tracks every Call / WhatsApp / Quote / Email link on the page,
+    // including ones added later. Capture phase, so handlers that stop propagation can't hide it.
+    this._onTrackClick = (e) => {
+      const el = e.target && e.target.closest ? e.target.closest('a, button') : null;
+      const type = el ? this._trackType(el) : '';
+      if (type) this._track(type);
+    };
+    document.addEventListener('click', this._onTrackClick, true);
     this._onHash = () => {
       const r = Component.parseHash();
       // Overlay scroll-lock is owned by the route now, so Back can never strand a locked body.
@@ -4423,6 +4611,8 @@ class Component extends DCLogic {
 
   componentWillUnmount() {
     window.removeEventListener('hashchange', this._onHash);
+    document.removeEventListener('click', this._onTrackClick, true);
+    clearTimeout(this._waTimer);
     document.body.style.overflow = '';
     window.removeEventListener('resize', this._onResize);
     window.removeEventListener('scroll', this._onScroll);
@@ -4965,6 +5155,28 @@ class Component extends DCLogic {
       onPtype: (e) => this._setField('ptype', e.target.value),
       messageValue: this.state.form.message,
       onMessage: (e) => this._setField('message', e.target.value),
+      messageError: this.state.errors.message || '',
+      hasMessageError: !!this.state.errors.message,
+      websiteValue: this.state.form.website,
+      onWebsite: (e) => this._setField('website', e.target.value),
+      consentChecked: !!this.state.form.consent,
+      onConsent: (e) => this._setField('consent', e.target.checked),
+      consentError: this.state.errors.consent || '',
+      hasConsentError: !!this.state.errors.consent,
+      sending: this.state.sending,
+      sendingAria: this.state.sending ? 'true' : 'false',
+      submitLabel: this.state.sending ? 'Sending…' : 'Send enquiry',
+      submitStyle: 'margin-top: clamp(20px, 2.4vw, 26px); padding: 15px 30px; border: 0; border-radius: 8px; background: #f5b942; color: #082b4c; font-family: Manrope, Helvetica, Arial, sans-serif; font-size: 15.5px; font-weight: 600; ' + (this.state.sending ? 'opacity: .72; cursor: progress;' : 'cursor: pointer;'),
+      waUrl: this.state.waUrl,
+      sentRef: this.state.sentRef,
+      hasSentRef: !!this.state.sentRef,
+      sentEyebrow: this.state.sentSaved ? 'Enquiry received' : 'Almost there',
+      sentBody: this.state.sentSaved
+        ? 'Your enquiry is saved with our team. WhatsApp should open now with your details ready, so you can message us directly.'
+        : 'We couldn\u2019t reach our server just now, so your details are ready in a WhatsApp message instead. Press send and our team will get it.',
+      resetEnquiry: () => { clearTimeout(this._waTimer); this.setState({ sent: false, waUrl: '', sentRef: '', sentSaved: false, errors: {}, form: Component.EMPTY_FORM }); },
+      showFloatWa: !det && !this.state.menuOpen,
+      floatWaHref: this._waLink('Hello Envex Energy, I would like to know more about solar for my property.'),
       intents: Component.INTENTS.map(i => ({
         label: i[0], active: this.state.form.ptype === i[1],
         onPick: () => this._setField('ptype', i[1]),
