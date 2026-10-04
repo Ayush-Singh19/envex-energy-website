@@ -11,7 +11,10 @@ from zoneinfo import ZoneInfo
 from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# Allowed in development only. 8080 is the port the frontend README serves the site on.
 LOCAL_DEV_ORIGINS = (
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
     "http://localhost:5500",
     "http://127.0.0.1:5500",
     "http://localhost:8000",
