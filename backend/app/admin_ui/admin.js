@@ -76,6 +76,7 @@ async function api(path, { method = 'GET', body } = {}) {
   if (!res.ok) {
     const err = (data && data.error) || {};
     if (res.status === 401 && path !== '/auth/login') sessionEnded(err.message);
+    if (res.status === 403 && err.code === 'password_change_required') openPasswordModal(true);
     throw new ApiError(res.status, err.code || 'error', err.message || 'Something went wrong. Please try again.', err.fields);
   }
   return data;
@@ -203,6 +204,19 @@ async function addNote(l, text, button) {
   }
 }
 
+async function deleteLead(l) {
+  // A native confirm is enough here and keeps the page within its strict CSP.
+  if (!window.confirm(`Delete the enquiry from ${l.name} (${l.reference})? This can't be undone.`)) return;
+  try {
+    await api(`/admin/enquiries/${l.id}`, { method: 'DELETE' });
+    closeLead();
+    toast(`Enquiry ${l.reference} deleted.`);
+    reloadView();
+  } catch (err) {
+    fail(err);
+  }
+}
+
 async function openLead(id) {
   if (!S.openId) S.lastFocus = document.activeElement;
   S.openId = id;
@@ -267,6 +281,7 @@ function sessionEnded(message) {
 }
 function resetState() {
   Object.assign(S, { me: null, view: 'today', tab: 'all', q: '', today: null, list: null, openId: null, detail: null });
+  delete modalRoot.dataset.forced;
   modalRoot.replaceChildren();
   document.body.classList.remove('locked');
 }
@@ -311,8 +326,7 @@ function loginView(notice) {
       submit.textContent = 'Signing in…';
       try {
         S.me = await api('/auth/login', { method: 'POST', body: { email: email.value.trim(), password: pass.value } });
-        renderShell();
-        reloadView();
+        enterApp();
       } catch (err) {
         errBox.textContent = err.message;
         errBox.hidden = false;
@@ -667,6 +681,11 @@ function drawer() {
             h('small', null, fmtDateTime(new Date(t.at)), t.by ? ` · ${t.by}` : ''),
           ))),
         ),
+        h('div', { class: 'box danger-box' },
+          h('h3', null, 'Remove data'),
+          h('p', { class: 'danger-note' }, 'If the customer asks for their details to be removed, delete the enquiry. This can\u2019t be undone; the history keeps only its reference.'),
+          h('button', { class: 'btn btn-danger btn-sm', type: 'button', onclick: () => deleteLead(l) }, 'Delete this enquiry'),
+        ),
       ),
     ),
   ];
@@ -687,7 +706,16 @@ function renderDrawer() {
 }
 
 // ============================================================ change password
-function openPasswordModal() {
+// A seed password (new account, or reset from the command line) must be replaced before
+// anything else: the API refuses admin calls until then, and this modal can't be dismissed.
+function enterApp() {
+  renderShell();
+  if (S.me.must_change_password) openPasswordModal(true);
+  else reloadView();
+}
+
+function openPasswordModal(forced = false) {
+  if (forced && modalRoot.dataset.forced === 'true') return; // already showing
   const field = (id, label, auto) => {
     const input = h('input', { class: 'input', id, type: 'password', autocomplete: auto, maxlength: '200' });
     const err = h('div', { class: 'field-error', hidden: true });
@@ -698,7 +726,7 @@ function openPasswordModal() {
   const cf = field('pw-conf', 'Type the new password again', 'new-password');
   const err = h('div', { class: 'form-error', role: 'alert', hidden: true });
   const submit = h('button', { class: 'btn btn-primary', type: 'submit' }, 'Change password');
-  const close = () => modalRoot.replaceChildren();
+  const close = () => { if (!forced) modalRoot.replaceChildren(); };
   const show = (f, msg) => { f.err.textContent = msg; f.err.hidden = !msg; };
 
   const form = h('form', {
@@ -712,8 +740,10 @@ function openPasswordModal() {
       submit.disabled = true;
       try {
         await api('/auth/change-password', { method: 'POST', body: { current_password: cur.input.value, new_password: nw.input.value } });
-        close();
+        delete modalRoot.dataset.forced;
+        modalRoot.replaceChildren();
         toast('Password changed. Other devices have been signed out.');
+        if (forced) { S.me.must_change_password = false; reloadView(); }
       } catch (ex) {
         submit.disabled = false;
         if (ex.fields && ex.fields.current_password) show(cur, ex.fields.current_password);
@@ -723,22 +753,28 @@ function openPasswordModal() {
     },
   },
     err, cur.el, nw.el, cf.el,
-    h('div', { class: 'modal-actions' }, h('button', { class: 'btn', type: 'button', onclick: close }, 'Cancel'), submit),
+    h('div', { class: 'modal-actions' },
+      forced ? h('button', { class: 'btn', type: 'button', onclick: signOut }, 'Sign out') : h('button', { class: 'btn', type: 'button', onclick: close }, 'Cancel'),
+      submit),
   );
   modalRoot.replaceChildren(
     h('div', { class: 'scrim modal-scrim', onclick: close }),
     h('div', { class: 'modal', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'pw-title' },
-      h('h2', { id: 'pw-title' }, 'Change password'),
-      h('p', { class: 'sub' }, 'Other devices will be signed out.'),
+      h('h2', { id: 'pw-title' }, forced ? 'Choose a new password' : 'Change password'),
+      h('p', { class: 'sub' }, forced
+        ? 'This account is using a temporary password. Choose your own to continue. Avoid common words, sequences and the company name.'
+        : 'Other devices will be signed out.'),
       form,
     ),
   );
+  if (forced) modalRoot.dataset.forced = 'true';
   cur.input.focus();
 }
 
 // ============================================================ global handlers & boot
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
+  if (modalRoot.dataset.forced === 'true') return; // the forced password change can't be skipped
   if (modalRoot.childElementCount) modalRoot.replaceChildren();
   else if (S.openId) closeLead();
 });
@@ -758,6 +794,5 @@ document.addEventListener('visibilitychange', () => {
     renderLogin();
     return;
   }
-  renderShell();
-  reloadView();
+  enterApp();
 })();

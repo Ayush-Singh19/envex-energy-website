@@ -388,3 +388,9 @@ a.btn, a.icon-btn { text-decoration: none; }
 .field-error { color: var(--red); font-size: 13px; }
 .note small b { font-weight: 700; color: #33506b; }
 .btn[disabled] { opacity: .6; cursor: progress; }
+
+/* ---------- delete on request ---------- */
+.danger-box { border-color: #f3d6d3; }
+.danger-note { margin: 0 0 12px; font-size: 13.5px; color: var(--muted); }
+.btn-danger { color: var(--red); border-color: #efc2bd; background: #fff; }
+.btn-danger:hover { background: var(--red-bg); border-color: #e5a39c; }
