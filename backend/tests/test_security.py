@@ -383,3 +383,12 @@ async def test_retention_purge(session: AsyncSession) -> None:
         .all()
     )
     assert purge_entry.new_value == {"enquiries": 1, "audit_entries": 1, "click_events": 1}
+
+
+async def test_admin_page_is_revalidated_on_every_load(client: httpx.AsyncClient) -> None:
+    for path in ("/admin/", "/admin/admin.js", "/admin/admin.css"):
+        res = await client.get(path)
+        assert res.headers["cache-control"] == "no-cache", path
+        assert "etag" in res.headers, path  # unchanged files still come back as a cheap 304
+    api = await client.get("/api/v1/auth/me")
+    assert api.headers["cache-control"] == "no-store"

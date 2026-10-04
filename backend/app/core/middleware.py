@@ -195,6 +195,11 @@ class SecurityHeadersMiddleware:
                     headers["Content-Security-Policy"] = ADMIN_CSP
                 if path.startswith("/api/v1/admin") or path.startswith("/api/v1/auth"):
                     headers["Cache-Control"] = "no-store"
+                elif path == "/admin" or path.startswith("/admin/"):
+                    # Revalidate the admin page's HTML/JS/CSS on every load (cheap 304 via
+                    # ETag), so an update reaches admins straight away instead of whenever
+                    # the browser's heuristic cache expires.
+                    headers["Cache-Control"] = "no-cache"
             await send(message)
 
         await self.app(scope, receive, send_wrapper)

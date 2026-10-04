@@ -172,7 +172,9 @@ const fail = (err) => toast(err instanceof ApiError ? err.message : 'Something w
 // the click opens a call card instead: the number large and easy to read, plus copy,
 // "call from this computer" and WhatsApp. Detected by input type, not screen width, so a
 // narrow laptop window still gets the card and a phone always gets the dialler.
-const isPhoneLike = () => window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+// "Phone-like" = no input on the device can hover (no mouse or trackpad at all). Uses any-*
+// rather than the primary pointer, so a touchscreen laptop with a trackpad gets the card.
+const isPhoneLike = () => !window.matchMedia('(any-hover: hover)').matches;
 
 function onCallClick(l) {
   return (e) => {
