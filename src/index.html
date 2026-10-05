@@ -3554,10 +3554,13 @@
 class Component extends DCLogic {
   // ============================== SITE CONFIG ==============================
   // API_BASE: where the Envex backend runs, with no trailing slash.
-  //   Local development: 'http://localhost:8000' (serve this page from http://localhost:5500).
-  //   Before publishing: change to the deployed API, e.g. 'https://envex-api.onrender.com'.
+  //   Live site: https://api.envexenergy.com (Render).
+  //   On your own computer (localhost / 127.0.0.1) it uses the local Docker backend instead,
+  //   so local testing never sends test enquiries to the live database.
   // If the API can't be reached, the form still opens WhatsApp, so no lead is lost.
-  static API_BASE = 'http://localhost:8000';
+  static API_BASE = /^(localhost|127\.0\.0\.1)$/.test(typeof location === 'undefined' ? '' : location.hostname)
+    ? 'http://localhost:8000'
+    : 'https://api.envexenergy.com';
   // Company WhatsApp number in wa.me format: country code + number, digits only.
   static WHATSAPP_NUMBER = '917055444005';
   // =========================================================================
