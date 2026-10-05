@@ -7,6 +7,11 @@ async def test_health_reports_db_ok(client: httpx.AsyncClient) -> None:
     assert res.json() == {"status": "ok", "db": "ok"}
 
 
+async def test_health_answers_head_for_uptime_monitors(client: httpx.AsyncClient) -> None:
+    res = await client.head("/api/v1/health")
+    assert res.status_code == 200
+
+
 async def test_security_headers_present(client: httpx.AsyncClient) -> None:
     res = await client.get("/api/v1/health")
     assert res.headers["x-frame-options"] == "DENY"

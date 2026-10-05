@@ -18,7 +18,8 @@ router = APIRouter(tags=["public"])
 MAX_EVENT_BODY_BYTES = 2048
 
 
-@router.get("/health")
+# HEAD too: uptime monitors (UptimeRobot) check with HEAD and treat 405 as "down".
+@router.api_route("/health", methods=["GET", "HEAD"])
 async def health(session: SessionDep) -> JSONResponse:
     try:
         await session.execute(text("SELECT 1"))
